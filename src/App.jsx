@@ -1,14 +1,15 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router";
-import ResponsiveAppBar from "./components/appbar.jsx";
-import ShoppingList from "./pages/ShoppingList";
-import AddMeals from "./pages/AddMeals";
-import Homepage from "./pages/HomePage";
+import ShoppingList from './pages/ShoppingList';
+import AddMeals from './pages/AddMeals';
+import Homepage from './pages/HomePage';
+import ResponsiveAppBar from './components/appbar';
+
 
 function App() {
   return (
     <>
       <Router>
-        <ResponsiveAppBar />
+        < ResponsiveAppBar/>
         <Routes>
           <Route path="/" element={<Homepage />} />
           <Route path="/add" element={<AddMeals />} />
