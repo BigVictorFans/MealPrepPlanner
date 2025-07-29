@@ -10,28 +10,27 @@ import MenuIcon from "@mui/icons-material/Menu";
 import Container from "@mui/material/Container";
 import Button from "@mui/material/Button";
 import MenuItem from "@mui/material/MenuItem";
-import DriveFileRenameOutlineIcon from "@mui/icons-material/DriveFileRenameOutline";
+import RestaurantIcon from "@mui/icons-material/Restaurant";
 
 /*
 Routes:
-All notes => /
-Add note => /add
-Categories => /categories
+Home page => /
+Add meal plans => /add
+Shopping list => /shoppinglist
 */
 
-// const pages = ["All Notes", "Add Note", "Categories"];
 const pages = [
   {
-    label: "All Notes",
+    label: "Home Page",
     url: "/",
   },
   {
-    label: "Add Note",
+    label: "Add Meal Plan",
     url: "/add",
   },
   {
-    label: "Categories",
-    url: "/categories",
+    label: "Shopping List",
+    url: "/shoppinglist",
   },
 ];
 
@@ -48,12 +47,10 @@ function ResponsiveAppBar() {
   };
 
   return (
-    <AppBar position="static">
+    <AppBar position="static" color="warning">
       <Container maxWidth="xl">
         <Toolbar disableGutters>
-          <DriveFileRenameOutlineIcon
-            sx={{ display: { xs: "none", md: "flex" }, mr: 1 }}
-          />
+          <RestaurantIcon sx={{ display: { xs: "none", md: "flex" }, mr: 1 }} />
           <Typography
             variant="h6"
             noWrap
@@ -69,7 +66,7 @@ function ResponsiveAppBar() {
               textDecoration: "none",
             }}
           >
-            My Notes App
+            Meal Planner
           </Typography>
 
           <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
@@ -118,9 +115,7 @@ function ResponsiveAppBar() {
               ))}
             </Menu>
           </Box>
-          <DriveFileRenameOutlineIcon
-            sx={{ display: { xs: "flex", md: "none" }, mr: 1 }}
-          />
+          <RestaurantIcon sx={{ display: { xs: "flex", md: "none" }, mr: 1 }} />
           <Typography
             variant="h5"
             noWrap
@@ -137,7 +132,7 @@ function ResponsiveAppBar() {
               textDecoration: "none",
             }}
           >
-            My Notes App
+            Meal Planner
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
             {pages.map((page) => (
