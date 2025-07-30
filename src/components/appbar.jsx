@@ -21,7 +21,7 @@ Shopping list => /shoppinglist
 
 const pages = [
   {
-    label: "Home Page",
+    label: "Home",
     url: "/",
   },
   {
