@@ -48,14 +48,14 @@ function ResponsiveAppBar() {
 
   return (
     <AppBar position="static" color="warning">
-      <Container maxWidth="xl">
+      <Container maxWidth="xl" sx={{ minWidth: "100%" }}>
         <Toolbar disableGutters>
           <RestaurantIcon sx={{ display: { xs: "none", md: "flex" }, mr: 1 }} />
           <Typography
             variant="h6"
             noWrap
             component="a"
-            href="#app-bar-with-responsive-menu"
+            href="/"
             sx={{
               mr: 2,
               display: { xs: "none", md: "flex" },
