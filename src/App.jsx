@@ -3,8 +3,7 @@ import ShoppingList from './pages/ShoppingList';
 import AddMeals from './pages/AddMeals';
 import Homepage from './pages/HomePage';
 import ResponsiveAppBar from './components/appbar';
-import ViewMeals from './pages/ViewFood';
-
+import MealPlan from './pages/MealPlan';
 
 function App() {
   return (
@@ -15,7 +14,7 @@ function App() {
           <Route path="/" element={<Homepage />} />
           <Route path="/add" element={<AddMeals />} />
           <Route path="/shoppinglist" element={<ShoppingList />} />
-          <Route path="/view" element={<ViewMeals />} />
+          <Route path="/mealplan" element={<MealPlan />} />
         </Routes>
       </Router>
     </>
