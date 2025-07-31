@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { useState } from "react";
 import { Link as RouterLink, useNavigate } from "react-router";
 import { Container, Box, Typography, Grid } from "@mui/material";
@@ -29,28 +28,19 @@ function Homepage() {
 
   // useNavigate hook to navigate between pages
   const navigate = useNavigate();
-  const [isPrepped, setIsPrepped] = useState(false);
+  const [isCompleted, setisCompleted] = useState(false);
 
   // just some button functions
   const TogglePrep = () => {
-    setIsPrepped(!isPrepped);
+    setisCompleted(!isCompleted);
   };
 
-  const [week, setweek] = React.useState('');
+  const [week, setWeek] = useState("");
 
-  const handleChange1 = (event) => {
-    setweek(event.target.value);
-  };
-
-  const [show, setshow] = useState('');
-
-  const handleChange2 = (event) => {
-    setshow(event.target.value);
-  };
+  const [status, setStatus] = useState("");
 
   // Dummy data for demonstration
   const counter = [1, 2, 3];
-
 
   return(
     <>
@@ -77,17 +67,25 @@ function Homepage() {
         </TabContext>
       </Box>
       {/* meal trackers */}
-      <Container sx={{p: 0, m:0, p:2, mx: 'auto', maxWidth: '100%'}}>
-        <Typography variant='h6'>Monday:</Typography>
+      <Container sx={{ m: 0, p: 2, mx: "auto", maxWidth: "100%" }}>
         {/* the cards */}
-        <Grid container spacing={2}  sx={{m:0, p:2, display: 'flex', gap: 4, justifyContent: 'center'}}>
+        <Grid
+          container
+          spacing={2}
+          sx={{ m: 0, p: 2, display: "flex", gap: 4, justifyContent: "center" }}
+        >
           {counter.map(() => (
             // one card
             <Grid item xs={12} sm={6} md={4}>
-              <Card sx={{ minWidth: 350, bgcolor: '#eceff1' }}>
-                <Typography gutterBottom variant="h5" component="div" sx={{ p: 2, textAlign: 'center', fontWeight: 'bold' }}>
-                    Breakfast
-                  </Typography>
+              <Card sx={{ minWidth: 350, bgcolor: "#eceff1" }}>
+                <Typography
+                  gutterBottom
+                  variant="h5"
+                  component="div"
+                  sx={{ p: 2, textAlign: "center", fontWeight: "bold" }}
+                >
+                  Breakfast
+                </Typography>
                 <CardMedia
                   component="img"
                   alt="green iguana"
@@ -99,26 +97,39 @@ function Homepage() {
                   <Typography gutterBottom variant="h5" component="div">
                     FoodName
                   </Typography>
-                  <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                    Ingredients: <br/>Chicken, Rice, feinsauce, victorsauce
+                  <Typography variant="body2" sx={{ color: "text.secondary" }}>
+                    Ingredients: <br />
+                    Chicken, Rice, feinsauce, victorsauce
                   </Typography>
                 </CardContent>
-                <CardActions sx={{ display: 'flex', justifyContent: "end", p: 2 }}>
+                <CardActions
+                  sx={{ display: "flex", justifyContent: "end", p: 2 }}
+                >
                   <Button
                     onClick={TogglePrep}
-                    sx={{ bgcolor: isPrepped ? 'green' : 'grey', color: 'white' }}
+                    sx={{
+                      bgcolor: isCompleted ? "green" : "grey",
+                      color: "white",
+                    }}
                   >
-                    {isPrepped ? "Prepped" : "Not Prepped"}
+                    {isCompleted ? "Completed" : "Planned"}
                   </Button>
                   <Button variant="contained">View</Button>
-                  <Button variant="contained" sx={{bgcolor:'red'}}>Delete</Button>
+                  <Button variant="contained" sx={{ bgcolor: "red" }}>
+                    Delete
+                  </Button>
                 </CardActions>
               </Card>
             </Grid>
           ))}
         </Grid>
         {/* fab button */}
-        <Fab color="primary" aria-label="add" sx={{ position: 'fixed', bottom: 16, right: 16 }} onClick={() => navigate('/add')}>
+        <Fab
+          color="warning"
+          aria-label="add"
+          sx={{ position: "fixed", bottom: 16, right: 16 }}
+          onClick={() => navigate("/add")}
+        >
           <AddIcon />
         </Fab>
       </Container>

@@ -19,7 +19,6 @@ import ClearIcon from "@mui/icons-material/Clear";
 import { useState } from "react";
 import { nanoid } from "nanoid";
 
-
 function AddMeals() {
   const navigate = useNavigate();
 
@@ -181,6 +180,7 @@ function AddMeals() {
               }}
             />
           </Box>
+          {/* maybe add an upload image button here */}
           <InputLabel sx={{ mt: "20px" }}>
             Ingredients ({ingredients.length})
           </InputLabel>
@@ -212,7 +212,6 @@ function AddMeals() {
           >
             <TextField
               fullWidth
-              autoFocus
               id="meal_ingredients"
               label="Ingredients"
               variant="outlined"
@@ -268,9 +267,6 @@ function AddMeals() {
         >
           <Button color="primary" variant="contained" onClick={addNewMealPlan}>
             Save Meal
-          </Button>
-          <Button variant="outlined" component={RouterLink} to={`/meal/1`}>
-            Go to meal page
           </Button>
           <Button variant="outlined" component={RouterLink} to="/">
             Cancel
