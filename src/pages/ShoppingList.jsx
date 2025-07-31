@@ -176,6 +176,9 @@ function ShoppingList() {
             ))}
           </List>
         </Paper>
+        <Button variant="contained" color="primary" sx={{ mt: 2, minWidth: "60%", mx: "auto", display: "block" }}>
+          Auto Generate Shopping List
+        </Button>
       </Container>
     </>
   );
