@@ -5,18 +5,32 @@ import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
 import Button from "@mui/material/Button";
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
-import CardMedia from "@mui/material/CardMedia";
-import Fab from "@mui/material/Fab";
-import AddIcon from "@mui/icons-material/Add";
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
+import CardMedia from '@mui/material/CardMedia';
+import Fab from '@mui/material/Fab';
+import AddIcon from '@mui/icons-material/Add';
+import Tab from '@mui/material/Tab';
+import TabContext from '@mui/lab/TabContext';
+import TabList from '@mui/lab/TabList';
+import TabPanel from '@mui/lab/TabPanel';
+
 
 function Homepage() {
+
+  const [tabvalue, setTabvalue] = React.useState('1');
+
+  const handleTabChange = (event, newValue) => {
+    setTabvalue(newValue);
+  };
+
+  // useNavigate hook to navigate between pages
   const navigate = useNavigate();
   const [isCompleted, setisCompleted] = useState(false);
 
+  // just some button functions
   const TogglePrep = () => {
     setisCompleted(!isCompleted);
   };
@@ -25,52 +39,33 @@ function Homepage() {
 
   const [status, setStatus] = useState("");
 
+  // Dummy data for demonstration
   const counter = [1, 2, 3];
 
-  return (
+  return(
     <>
-      <Container sx={{ m: 0, p: 2, display: "flex", gap: 2, maxwidth: "100%" }}>
-        {/* week label */}
-        <Box sx={{ minWidth: 120, p: 0 }}>
-          <Typography variant="h6">Week:</Typography>
-          <FormControl fullWidth>
-            <InputLabel id="demo-simple-select-label">Week</InputLabel>
-            <Select
-              labelId="demo-simple-select-label"
-              id="demo-simple-select"
-              value={week}
-              label="week"
-              onChange={(event) => {
-                setWeek(event.target.value);
-              }}
-            >
-              <MenuItem value="w1">Week 1</MenuItem>
-              <MenuItem value="w2">Week 2</MenuItem>
-              <MenuItem value="w3">Week 3</MenuItem>
-              <MenuItem value="w4">Week 4</MenuItem>
-            </Select>
-          </FormControl>
-        </Box>
-        {/* status */}
-        <Box sx={{ minWidth: 120, p: 0 }}>
-          <Typography variant="h6">Status</Typography>
-          <FormControl fullWidth>
-            <InputLabel id="demo-simple-select-label">Status</InputLabel>
-            <Select
-              labelId="demo-simple-select-label"
-              id="demo-simple-select"
-              value={status}
-              label="Status"
-              onChange={(event) => {
-                setStatus(event.target.value);
-              }}
-            >
-              <MenuItem value="planned">Planned</MenuItem>
-              <MenuItem value="completed">Completed</MenuItem>
-            </Select>
-          </FormControl>
-        </Box>
-      </Container>
+      <Box sx={{ width: '100%', typography: 'body1' }}>
+        <TabContext value={tabvalue}>
+          <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+            <TabList onChange={handleTabChange} aria-label="lab API tabs example" sx={{ mx: 'auto' }}>
+              <Tab label="Monday" value="1" />
+              <Tab label="Tuesday" value="2" />
+              <Tab label="Wednesday" value="3" />
+              <Tab label="Thursday" value="4" />
+              <Tab label="Friday" value="5" />
+              <Tab label="Saturday" value="6" />
+              <Tab label="Sunday" value="7" />
+            </TabList>
+          </Box>
+          <TabPanel value="1">Monday</TabPanel>
+          <TabPanel value="2">Tuesday</TabPanel>
+          <TabPanel value="3">Wednesday</TabPanel>
+          <TabPanel value="4">Thursday</TabPanel>
+          <TabPanel value="5">Friday</TabPanel>
+          <TabPanel value="6">Saturday</TabPanel>
+          <TabPanel value="7">Sunday</TabPanel>
+        </TabContext>
+      </Box>
       {/* meal trackers */}
       <Container sx={{ m: 0, p: 2, mx: "auto", maxWidth: "100%" }}>
         {/* the cards */}
