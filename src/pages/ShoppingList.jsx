@@ -50,10 +50,8 @@ function ShoppingList() {
           const mealPlanList = JSON.parse(localStorage.getItem("mealplanlist")) || [];
           // 2. Extract and flatten all ingredients (no nested arrays)
           const allIngredients = mealPlanList.flatMap(meal => meal.ingredients || []);
-          // 3. Optional: Remove duplicates by ID (optional but useful!)
-          const uniqueIngredients = Array.from(
-            new Map(allIngredients.map(ing => [ing.id, ing])).values()
-          );
+          // 3. uniqueIngredients = allIngredients
+          const uniqueIngredients = allIngredients
           // 4. Update state
           setShoppingList(uniqueIngredients);
           // 5. Save to localStorage
