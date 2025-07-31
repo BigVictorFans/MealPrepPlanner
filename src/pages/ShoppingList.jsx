@@ -14,14 +14,109 @@ import {
 import { useState } from "react";
 import { List, ListItem, ListItemText, IconButton } from "@mui/material";
 import { Edit, Delete } from "@mui/icons-material";
-
-const counter = [1, 2, 3, 4, 5];
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import { nanoid } from "nanoid";
 
 function ShoppingList() {
+  // 1. load the data from the local storage (key is shoppinglist).
+  const listInLocalStorage = JSON.parse(localStorage.getItem("shoppinglist"));
+
+  /* mapping data from mealplanlist to get ingredients to add into shopping list (doesnt work) */
+  // const mealPlanList = JSON.parse(localStorage.getItem("mealplanlist"));
+
+  // const ingredients = mealPlanList?.map((meal) => {
+  //   return meal.ingredients;
+  // });
+
+  // localStorage.setItem("shoppinglist", JSON.stringify(ingredients));
+  // const listInLocalStorage = JSON.parse(localStorage.getItem("shoppinglist"));
+
+  // states for item and shopping list
+  const [item, setItem] = useState("");
+  const [shoppinglist, setShoppingList] = useState(listInLocalStorage || []);
+
+  // function for updating the local storage
+  const updatedLocalStorage = (updatedShoppingList) => {
+    localStorage.setItem("shoppinglist", JSON.stringify(updatedShoppingList));
+  };
+
+  // 4. function to add new item into the state and also save it into local storage
+  const handleAddNew = () => {
+    // 4a. make sure the field is not empty, show error
+    if (item === "") {
+      alert("Please fill in the field");
+    } else {
+      // 4b. add the new item to the state
+      const updatedShoppingList = [
+        ...shoppinglist,
+        { id: nanoid(), name: item },
+      ];
+      setShoppingList(updatedShoppingList);
+      // show notification of success message
+      alert("Item has been added to the shopping list!");
+      // reset the field
+      setItem("");
+      // 4c. update the local storage with the updated shopping list
+      updatedLocalStorage(updatedShoppingList);
+    }
+  };
+
+  // 5. function to update the item name
+  const handleUpdate = (list) => {
+    // 5a. prompt the user to update the new name for the selected item (pass in the current value)
+    const newListItem = prompt(
+      "Please enter the new name for the category",
+      list.name
+    );
+
+    if (newListItem) {
+      const updatedShoppingList = [...shoppinglist];
+      setShoppingList(
+        updatedShoppingList.map((item) => {
+          if (item.id === list.id) {
+            item.name = newListItem;
+          }
+          return item;
+        })
+      );
+
+      // show notification of success message
+      alert("Category has been successfully updated.");
+      // 5c. update the local storage with the udpated shopping list
+      updatedLocalStorage(updatedShoppingList);
+    }
+  };
+
+  // 6. function to delete the item from shopping list
+  const handleDelete = (id) => {
+    const confirmation = confirm(
+      "Are you sure you want to delete this category?"
+    );
+
+    if (confirmation) {
+      // 6a. delete the item from the shopping list state
+      const updatedShoppingList = shoppinglist.filter((item) => {
+        if (item.id !== id) {
+          return true; // keep
+        } else {
+          return false; // throw away
+        }
+      });
+      setShoppingList(updatedShoppingList);
+      // show notification of success message
+      alert("Category has been successfully deleted.");
+      // 6b. update the local storage with the updated shopping list
+      updatedLocalStorage(updatedShoppingList);
+    }
+  };
+
   return (
     <>
-      <Container maxWidth="md" sx={{ py: "60px" }}>
-        <Typography variant="h3">Your Shopping List</Typography>
+      <Container sx={{ py: 6 }}>
+        <Typography variant="h4">
+          <ShoppingCartIcon sx={{ fontSize: "25px", paddingRight: "10px" }} />
+          Shopping List
+        </Typography>
         <Paper
           elevation={3}
           sx={{
@@ -29,28 +124,57 @@ function ShoppingList() {
             mt: "20px",
           }}
         >
-          <Typography variant="h6">Existing Items (?)</Typography>
+          <InputLabel>Add an item</InputLabel>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              gap: "10px",
+              mt: "5px",
+            }}
+          >
+            <TextField
+              fullWidth
+              label="Item"
+              variant="outlined"
+              value={item}
+              onChange={(event) => setItem(event.target.value)}
+            />
+            <Button color="primary" variant="contained" onClick={handleAddNew}>
+              Add
+            </Button>
+          </Box>
+        </Paper>
+        <Paper
+          elevation={3}
+          sx={{
+            p: "20px",
+            mt: "20px",
+          }}
+        >
+          <InputLabel>Existing Categories ({shoppinglist.length})</InputLabel>
           <List sx={{ width: "100%" }}>
-            {[...counter].map((_, index) => (
+            {/* map shopping list items */}
+            {shoppinglist.map((list) => (
               <ListItem
-                key={index}
-                divider
+                key={list.id}
                 disableGutters
+                divider
                 secondaryAction={
                   <Box sx={{ display: "flex", gap: "10px" }}>
-                    <IconButton>
+                    <IconButton onClick={() => handleUpdate(list)}>
                       <Edit />
                     </IconButton>
-                    <IconButton>
+                    <IconButton onClick={() => handleDelete(list.id)}>
                       <Delete />
                     </IconButton>
                   </Box>
                 }
               >
-                <ListItemText primary={`#${index + 1} — Hello`} />
+                <ListItemText primary={`${list.name}`} />
               </ListItem>
-      ))}
-    </List>
+            ))}
+          </List>
         </Paper>
       </Container>
     </>
