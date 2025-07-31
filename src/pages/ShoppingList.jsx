@@ -112,9 +112,7 @@ function ShoppingList() {
 
   // 6. function to delete the item from shopping list
   const handleDelete = (id) => {
-    const confirmation = confirm(
-      "Are you sure you want to delete this category?"
-    );
+    const confirmation = confirm("Are you sure you want to delete this item?");
 
     if (confirmation) {
       // 6a. delete the item from the shopping list state
