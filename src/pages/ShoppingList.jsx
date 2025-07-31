@@ -40,6 +40,29 @@ function ShoppingList() {
     localStorage.setItem("shoppinglist", JSON.stringify(updatedShoppingList));
   };
 
+  // 3. handle auto generator
+  const handleAutoGenerate = () => {
+    const confirmation = confirm(
+      "Are you sure you want to auto generate the shopping list? This will overwrite your current shopping list."
+    )
+    if (confirmation) {
+          // 1. Get the mealplanlist from localStorage
+          const mealPlanList = JSON.parse(localStorage.getItem("mealplanlist")) || [];
+          // 2. Extract and flatten all ingredients (no nested arrays)
+          const allIngredients = mealPlanList.flatMap(meal => meal.ingredients || []);
+          // 3. uniqueIngredients = allIngredients
+          const uniqueIngredients = allIngredients
+          // 4. Update state
+          setShoppingList(uniqueIngredients);
+          // 5. Save to localStorage
+          localStorage.setItem("shoppinglist", JSON.stringify(uniqueIngredients));
+          // 6. Feedback
+          alert("The Shopping list has been replaced with all ingredients from your meal plan!");
+    }
+  };
+
+
+
   // 4. function to add new item into the state and also save it into local storage
   const handleAddNew = () => {
     // 4a. make sure the field is not empty, show error
@@ -174,6 +197,9 @@ function ShoppingList() {
             ))}
           </List>
         </Paper>
+        <Button variant="contained" color="primary" sx={{ mt: "20px" }} onClick={handleAutoGenerate}>
+          Auto Generate Shopping List
+        </Button>
       </Container>
     </>
   );

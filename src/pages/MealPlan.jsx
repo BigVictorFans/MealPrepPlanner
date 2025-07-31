@@ -55,6 +55,9 @@ function MealPlan() {
     selectedMealPlan ? selectedMealPlan.preptime : ""
   );
 
+  console.log(mealplan)
+
+
   return (
     <>
       <Container maxWidth="lg" sx={{ py: "30px" }}>
