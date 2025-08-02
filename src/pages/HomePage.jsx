@@ -180,10 +180,10 @@ function Homepage() {
                   </Typography>
                   <CardMedia
                     component="img"
-                    alt="green iguana"
+                    alt={meal.name}
                     height="200"
                     width="100%"
-                    image="https://www.beyondthechickencoop.com/wp-content/uploads/2024/02/Baked-Italian-Sausage.jpg"
+                    image={meal.image || "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/No_image_available_600_x_450.svg/2560px-No_image_available_600_x_450.svg.png"}
                   />
                   <CardContent>
                     <Typography gutterBottom variant="h5" component="div">
