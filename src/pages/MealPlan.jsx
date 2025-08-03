@@ -43,7 +43,7 @@ function MealPlan() {
     );
   }
 
-  // set states for every single object (week, day, categories, name, ingredients, steps, preptime)
+  // set states for every single object (day, categories, name, ingredients, steps, preptime)
   // make it so that if it is the selected meal plan that the user is viewing, show the data inside of that selected meal plan
   const [name, setName] = useState(
     selectedMealPlan ? selectedMealPlan.name : ""
@@ -90,7 +90,10 @@ function MealPlan() {
           {/* image of food (to be implemented soon) */}
           <Box>
             <img
-              src={image || "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/300px-No_image_available.svg.png"}
+              src={
+                image ||
+                "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/300px-No_image_available.svg.png"
+              }
               style={{ width: "350px", height: "350px" }}
             />
           </Box>
