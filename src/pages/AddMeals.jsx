@@ -31,9 +31,12 @@ function AddMeals() {
   const [ingredients, setIngredients] = useState([]);
   // individual ingredients
   const [item, setItem] = useState("");
+  //steps and prep time
   const [steps, setSteps] = useState("");
   const [preptime, setPreptime] = useState("");
   const [status, setStatus] = useState("planned");
+  //image
+  const [image, setImage] = useState("");
 
   // load the meal plan data from local storage
   const mealplanLocalStorage = localStorage.getItem("mealplanlist");
@@ -73,7 +76,8 @@ function AddMeals() {
       name === "" ||
       ingredients === "" ||
       steps === "" ||
-      preptime === ""
+      preptime === "" ||
+      image === ""
     ) {
       alert("Please fill up all the fields");
     } else {
@@ -89,6 +93,7 @@ function AddMeals() {
           steps: steps,
           preptime: preptime,
           status: status,
+          image: image
         },
       ];
       setMealPlan(updatedMealPlan);
@@ -204,6 +209,36 @@ function AddMeals() {
               </ListItem>
             ))}
           </List>
+          <InputLabel sx={{ mt: "20px" }}>Meal Image</InputLabel>
+          <Box sx={{ display: "flex", alignItems: "center", gap: "20px", mt: "10px" }}>
+            <Button variant="contained" component="label">
+              Upload Image
+              <input
+                type="file"
+                accept="image/*"
+                hidden
+                onChange={(e) => {
+                  const file = e.target.files[0];
+                  if (file) {
+                    const reader = new FileReader();
+                    reader.onloadend = () => {
+                      setImage(reader.result);
+                    };
+                    reader.readAsDataURL(file);
+                  }
+                }}
+              />
+            </Button>
+            {image && (
+              <Box
+                component="img"
+                src={image}
+                alt="Preview"
+                sx={{ width: 100, height: 100, objectFit: "cover", borderRadius: 2 }}
+              />
+            )}
+          </Box>
+
           <Box
             sx={{
               display: "flex",

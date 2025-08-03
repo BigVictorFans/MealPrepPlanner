@@ -62,6 +62,11 @@ function MealPlan() {
     selectedMealPlan ? selectedMealPlan.preptime : ""
   );
 
+  // image
+  const [image, setImage] = useState(
+    selectedMealPlan ? selectedMealPlan.image : ""
+  );
+
   const [status, setStatus] = useState(
     selectedMealPlan ? selectedMealPlan.status : ""
   );
@@ -77,6 +82,7 @@ function MealPlan() {
     setMealPlan(updatedMealPlanList);
     localStorage.setItem("mealplanlist", JSON.stringify(updatedMealPlanList));
   };
+
   return (
     <>
       <Container maxWidth="lg" sx={{ py: "30px" }}>
@@ -84,7 +90,7 @@ function MealPlan() {
           {/* image of food (to be implemented soon) */}
           <Box>
             <img
-              src="https://thecozycook.com/wp-content/uploads/2022/04/Lasagna-Recipe-F5.jpg"
+              src={image || "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/300px-No_image_available.svg.png"}
               style={{ width: "350px", height: "350px" }}
             />
           </Box>
