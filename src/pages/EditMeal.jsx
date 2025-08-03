@@ -60,26 +60,36 @@ function EditMeal() {
     );
   }
 
-  // set states for every single object (week, day, categories, name, ingredients, steps, preptime)
+  // set states for every single object (day, categories, name, ingredients, steps, preptime)
   // make it so that if it is the selected meal plan that the user is viewing, show the data inside of that selected meal plan
   const [day, setDay] = useState(selectedMealPlan ? selectedMealPlan.day : "");
+
   const [name, setName] = useState(
     selectedMealPlan ? selectedMealPlan.name : ""
   );
+
   const [category, setCategory] = useState(
     selectedMealPlan ? selectedMealPlan.category : ""
   );
+
   // ingredients array (all ingredients)
   const [ingredients, setIngredients] = useState(
     selectedMealPlan ? selectedMealPlan.ingredients : []
   );
+
   // individual ingredients
   const [item, setItem] = useState("");
+
   const [steps, setSteps] = useState(
     selectedMealPlan ? selectedMealPlan.steps : ""
   );
   const [preptime, setPreptime] = useState(
     selectedMealPlan ? selectedMealPlan.preptime : ""
+  );
+
+  // image
+  const [image, setImage] = useState(
+    selectedMealPlan ? selectedMealPlan.image : ""
   );
 
   // add an ingredient to ingredients array
@@ -107,31 +117,76 @@ function EditMeal() {
   return (
     <>
       <Container maxWidth="lg" sx={{ py: "30px" }}>
-        <Box sx={{ display: "flex", mb: "20px" }}>
-          <Button
-            variant="outline"
-            component={RouterLink}
-            to={`/meal/${id}`}
-            sx={{ mt: "20px" }}
-          >
+        <Box
+          sx={{ display: "flex", justifyContent: "space-around", my: "20px" }}
+        >
+          <Button variant="outline" component={RouterLink} to={`/meal/${id}`}>
             <ArrowBackIcon />
             Back to Meal Page
           </Button>
-          <Typography variant="h2" sx={{ paddingLeft: "180px" }}>
-            Edit Meal Plan
-          </Typography>
+          <Typography variant="h2">Edit Meal Plan</Typography>
+          {/* update button */}
+          <Button variant="contained">Update Meal Plan</Button>
         </Box>
-        <Box sx={{ display: "flex", gap: "60px", py: "10px" }}>
-          {/* image of food (to be implemented soon) */}
+        {/* START Box for updating image, day, name, category, prep time */}
+        <Box
+          sx={{
+            display: "flex",
+            // justifyContent: "space-around",
+            alignItems: "center",
+            gap: "250px",
+            my: "60px",
+          }}
+        >
           <Box>
-            <img
-              src="https://thecozycook.com/wp-content/uploads/2022/04/Lasagna-Recipe-F5.jpg"
-              style={{ width: "350px", height: "350px" }}
-            />
-            {/* upload image button here */}
+            <InputLabel>Meal Image</InputLabel>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                gap: "20px",
+                mt: "10px",
+              }}
+            >
+              {/* preview of the uploaded image */}
+              {image && (
+                <Box
+                  component="img"
+                  src={image}
+                  alt="Preview"
+                  sx={{
+                    width: 350,
+                    height: 350,
+                    objectFit: "cover",
+                    borderRadius: 2,
+                  }}
+                />
+              )}
+              {/* upload image button */}
+              <Button variant="contained" component="label">
+                Upload Image
+                <input
+                  type="file"
+                  accept="image/*"
+                  hidden
+                  onChange={(e) => {
+                    const file = e.target.files[0];
+                    if (file) {
+                      const reader = new FileReader();
+                      reader.onloadend = () => {
+                        setImage(reader.result);
+                      };
+                      reader.readAsDataURL(file);
+                    }
+                  }}
+                />
+              </Button>
+            </Box>
           </Box>
-          {/* box for name, category and prep time of meal */}
-          <Box>
+
+          {/* START box for name, category and prep time of meal */}
+          <Box sx={{ width: "100%" }}>
             {/* update day */}
             <FormControl fullWidth>
               <InputLabel id="meal_day_label">Day</InputLabel>
@@ -198,7 +253,9 @@ function EditMeal() {
               />
             </Box>
           </Box>
+          {/* END Box for day, name, category, preptime */}
         </Box>
+        {/* END Box for updating image, day, name, category, prep time */}
         {/* steps and ingredients grid */}
         <Grid container spacing={5}>
           <Grid size={6}>
@@ -272,10 +329,6 @@ function EditMeal() {
                 }}
               />
             </Box>
-            {/* update button */}
-            <Button variant="contained" fullWidth sx={{ mt: "20px" }}>
-              Update Meal Plan
-            </Button>
           </Grid>
         </Grid>
       </Container>

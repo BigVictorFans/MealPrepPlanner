@@ -23,7 +23,6 @@ function AddMeals() {
   const navigate = useNavigate();
 
   const [day, setDay] = useState("");
-  const [week, setWeek] = useState("");
   const [category, setCategory] = useState("");
   // meal name
   const [name, setName] = useState("");
@@ -70,7 +69,6 @@ function AddMeals() {
   // add meal plan to local storage
   const addNewMealPlan = () => {
     if (
-      week === "" ||
       day === "" ||
       category === "" ||
       name === "" ||
@@ -85,7 +83,6 @@ function AddMeals() {
         ...mealplan,
         {
           id: nanoid(),
-          week: week,
           day: day,
           category: category,
           name: name,
@@ -93,7 +90,7 @@ function AddMeals() {
           steps: steps,
           preptime: preptime,
           status: status,
-          image: image
+          image: image,
         },
       ];
       setMealPlan(updatedMealPlan);
@@ -113,6 +110,7 @@ function AddMeals() {
             mt: "20px",
           }}
         >
+          {/* box for day and category */}
           <Box
             sx={{
               display: "flex",
@@ -121,23 +119,7 @@ function AddMeals() {
               mt: "20px",
             }}
           >
-            <FormControl fullWidth>
-              <InputLabel id="meal_week_label">Week</InputLabel>
-              <Select
-                labelId="meal_week_label"
-                id="meal_week"
-                label="Week"
-                value={week}
-                onChange={(event) => {
-                  setWeek(event.target.value);
-                }}
-              >
-                <MenuItem value="w1">Week 1</MenuItem>
-                <MenuItem value="w2">Week 2</MenuItem>
-                <MenuItem value="w3">Week 3</MenuItem>
-                <MenuItem value="w4">Week 4</MenuItem>
-              </Select>
-            </FormControl>
+            {/* day */}
             <FormControl fullWidth>
               <InputLabel id="meal_day_label">Day</InputLabel>
               <Select
@@ -158,23 +140,25 @@ function AddMeals() {
                 <MenuItem value="sun">Sunday</MenuItem>
               </Select>
             </FormControl>
+            {/* category */}
+            <FormControl fullWidth>
+              <InputLabel id="meal_category">Category</InputLabel>
+              <Select
+                labelId="meal_category"
+                id="meal_day"
+                label="Category"
+                value={category}
+                onChange={(event) => {
+                  setCategory(event.target.value);
+                }}
+              >
+                <MenuItem value="breakfast">Breakfast</MenuItem>
+                <MenuItem value="lunch">Lunch</MenuItem>
+                <MenuItem value="dinner">Dinner</MenuItem>
+              </Select>
+            </FormControl>
           </Box>
-          <FormControl fullWidth sx={{ mt: "20px" }}>
-            <InputLabel id="meal_category">Category</InputLabel>
-            <Select
-              labelId="meal_category"
-              id="meal_day"
-              label="Category"
-              value={category}
-              onChange={(event) => {
-                setCategory(event.target.value);
-              }}
-            >
-              <MenuItem value="breakfast">Breakfast</MenuItem>
-              <MenuItem value="lunch">Lunch</MenuItem>
-              <MenuItem value="dinner">Dinner</MenuItem>
-            </Select>
-          </FormControl>
+          {/* meal name */}
           <Box sx={{ mt: "20px" }}>
             <TextField
               fullWidth
@@ -187,85 +171,109 @@ function AddMeals() {
               }}
             />
           </Box>
-          {/* maybe add an upload image button here */}
-          <InputLabel sx={{ mt: "20px" }}>
-            Ingredients ({ingredients.length})
-          </InputLabel>
-          <List sx={{ width: "100%" }}>
-            {ingredients.map((ingredient) => (
-              <ListItem
-                key={ingredient.id}
-                disableGutters
-                divider
-                secondaryAction={
-                  <Box sx={{ display: "flex", gap: "10px" }}>
-                    <IconButton onClick={() => deleteIngredient(ingredient.id)}>
-                      <ClearIcon />
-                    </IconButton>
-                  </Box>
-                }
-              >
-                <ListItemText primary={`${ingredient.name}`} />
-              </ListItem>
-            ))}
-          </List>
-          <InputLabel sx={{ mt: "20px" }}>Meal Image</InputLabel>
-          <Box sx={{ display: "flex", alignItems: "center", gap: "20px", mt: "10px" }}>
-            <Button variant="contained" component="label">
-              Upload Image
-              <input
-                type="file"
-                accept="image/*"
-                hidden
-                onChange={(e) => {
-                  const file = e.target.files[0];
-                  if (file) {
-                    const reader = new FileReader();
-                    reader.onloadend = () => {
-                      setImage(reader.result);
-                    };
-                    reader.readAsDataURL(file);
+          {/* ingredients */}
+          <Box>
+            <InputLabel sx={{ mt: "20px" }}>
+              Ingredients ({ingredients.length})
+            </InputLabel>
+            {/* map added ingredients */}
+            <List sx={{ width: "100%" }}>
+              {ingredients.map((ingredient) => (
+                <ListItem
+                  key={ingredient.id}
+                  disableGutters
+                  divider
+                  secondaryAction={
+                    <Box sx={{ display: "flex", gap: "10px" }}>
+                      <IconButton
+                        onClick={() => deleteIngredient(ingredient.id)}
+                      >
+                        <ClearIcon />
+                      </IconButton>
+                    </Box>
                   }
+                >
+                  <ListItemText primary={`${ingredient.name}`} />
+                </ListItem>
+              ))}
+            </List>
+            {/* add ingredients */}
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: "10px",
+                mt: "20px",
+              }}
+            >
+              <TextField
+                fullWidth
+                id="meal_ingredients"
+                label="Ingredients"
+                variant="outlined"
+                value={item}
+                onChange={(event) => {
+                  setItem(event.target.value);
                 }}
               />
-            </Button>
-            {image && (
-              <Box
-                component="img"
-                src={image}
-                alt="Preview"
-                sx={{ width: 100, height: 100, objectFit: "cover", borderRadius: 2 }}
-              />
-            )}
+              <Button
+                color="primary"
+                variant="contained"
+                sx={{ minHeight: "55px" }}
+                onClick={addIngredient}
+              >
+                Add
+              </Button>
+            </Box>
           </Box>
-
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              gap: "10px",
-              mt: "20px",
-            }}
-          >
-            <TextField
-              fullWidth
-              id="meal_ingredients"
-              label="Ingredients"
-              variant="outlined"
-              value={item}
-              onChange={(event) => {
-                setItem(event.target.value);
+          {/* meal image */}
+          <Box sx={{ mt: "20px" }}>
+            <InputLabel>Meal Image</InputLabel>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "flex-start",
+                gap: "20px",
+                mt: "10px",
               }}
-            />
-            <Button
-              color="primary"
-              variant="contained"
-              sx={{ minHeight: "55px" }}
-              onClick={addIngredient}
             >
-              Add
-            </Button>
+              {/* preview of the uploaded image */}
+              {image && (
+                <Box
+                  component="img"
+                  src={image}
+                  alt="Preview"
+                  sx={{
+                    width: 200,
+                    height: 200,
+                    objectFit: "cover",
+                    borderRadius: 2,
+                  }}
+                />
+              )}
+              {/* upload image button */}
+              <Button variant="contained" component="label">
+                Upload Image
+                <input
+                  type="file"
+                  accept="image/*"
+                  hidden
+                  onChange={(e) => {
+                    const file = e.target.files[0];
+                    if (file) {
+                      const reader = new FileReader();
+                      reader.onloadend = () => {
+                        setImage(reader.result);
+                      };
+                      reader.readAsDataURL(file);
+                    }
+                  }}
+                />
+              </Button>
+            </Box>
           </Box>
+          {/* steps */}
           <Box sx={{ mt: "20px" }}>
             <TextField
               fullWidth
@@ -280,10 +288,11 @@ function AddMeals() {
               }}
             />
           </Box>
+          {/* prep time */}
           <Box sx={{ mt: "20px" }}>
             <TextField
               fullWidth
-              id="meal_name"
+              id="prep_time"
               label="Prep Time"
               variant="outlined"
               placeholder="Estimated Time"
@@ -294,6 +303,7 @@ function AddMeals() {
             />
           </Box>
         </Paper>
+        {/* buttons */}
         <Box
           sx={{
             display: "flex",

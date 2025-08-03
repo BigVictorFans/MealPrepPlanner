@@ -15,7 +15,6 @@ import Fab from "@mui/material/Fab";
 import Tab from "@mui/material/Tab";
 import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
-import TabPanel from "@mui/lab/TabPanel";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ViewIcon from "@mui/icons-material/Visibility";
@@ -39,8 +38,6 @@ function Homepage() {
     setisCompleted(!isCompleted);
   };
 
-  // states for week / status (not in use for now)
-  const [week, setWeek] = useState("w1");
   const [selectedStatus, setSelectedStatus] = useState("all");
 
   // tabs
@@ -95,13 +92,6 @@ function Homepage() {
   /* filter the meals */
   const filteredMeals = mealplan
     .filter((meal) => {
-      // if selected week matches the week, then only move onto filter through day
-      if (week === meal.week) {
-        return true;
-      }
-      return false;
-    })
-    .filter((meal) => {
       // if selected tab matches the day value in the meal, then show the meal
       if (tabvalue === meal.day) {
         return true;
@@ -149,33 +139,13 @@ function Homepage() {
               <Tab label="Sunday" value="sun" />
             </TabList>
           </Box>
-          {/* <TabPanel value="1">Monday</TabPanel> */}
         </TabContext>
         <Box
           sx={{
-            minWidth: 260,
-            paddingLeft: "10px",
-            display: "flex",
-            gap: "10px",
+            minWidth: 200,
+            paddingLeft: "20px",
           }}
         >
-          <FormControl fullWidth>
-            <InputLabel id="demo-simple-select-label">Week</InputLabel>
-            <Select
-              labelId="demo-simple-select-label"
-              id="demo-simple-select"
-              value={week}
-              label="week"
-              onChange={(event) => {
-                setWeek(event.target.value);
-              }}
-            >
-              <MenuItem value="w1">Week 1</MenuItem>
-              <MenuItem value="w2">Week 2</MenuItem>
-              <MenuItem value="w3">Week 3</MenuItem>
-              <MenuItem value="w4">Week 4</MenuItem>
-            </Select>
-          </FormControl>
           <FormControl fullWidth>
             <InputLabel id="demo-simple-select-label">Status</InputLabel>
             <Select
@@ -242,7 +212,10 @@ function Homepage() {
                     alt={meal.name}
                     height="200"
                     width="100%"
-                    image={meal.image || "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/No_image_available_600_x_450.svg/2560px-No_image_available_600_x_450.svg.png"}
+                    image={
+                      meal.image ||
+                      "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/No_image_available_600_x_450.svg/2560px-No_image_available_600_x_450.svg.png"
+                    }
                   />
                   <CardContent>
                     <Typography
