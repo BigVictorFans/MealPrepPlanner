@@ -1,19 +1,5 @@
-import {
-  Button,
-  Container,
-  Typography,
-  Card,
-  CardMedia,
-  CardContent,
-  Grid,
-  List,
-  ListItem,
-  ListItemText,
-  Chip,
-  Divider,
-  Box,
-  Stack,
-} from "@mui/material";
+import { Button, Container, Typography, Grid, Chip, Box } from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
 import { useState } from "react";
 import { Link as RouterLink, useParams } from "react-router";
 
@@ -31,10 +17,31 @@ function MealPlan() {
   // loading the existing data from the meal plan that has the same id as the id in the url
   const selectedMealPlan = mealplan.find((m) => m.id === id);
 
-  // if that id don't exist, useNavigate to another page (either error or home page) (doesnt work)
-  // if (!selectedMealPlan) {
-  //   navigate("/");
-  // }
+  // if that id don't exist, show this error page and then bring them back to home page with button
+  if (!selectedMealPlan) {
+    return (
+      <>
+        <Box sx={{ textAlign: "center", mt: "30px" }}>
+          <img
+            src="https://media.istockphoto.com/id/134843485/vector/confused-emoticon.jpg?s=612x612&w=0&k=20&c=GnHI36kUMFWfl2FAFzDnGUiVSswjUXtVx46Up2qPwDc="
+            style={{ height: "200px", width: "200px" }}
+          />
+          <Typography variant="h2">404</Typography>
+          <Typography variant="body2" sx={{ my: "20px" }}>
+            This page could not be found
+          </Typography>
+          <Button
+            variant="contained"
+            color="primary"
+            component={RouterLink}
+            to="/"
+          >
+            Return to home
+          </Button>
+        </Box>
+      </>
+    );
+  }
 
   // set states for every single object (week, day, categories, name, ingredients, steps, preptime)
   // make it so that if it is the selected meal plan that the user is viewing, show the data inside of that selected meal plan
@@ -60,8 +67,21 @@ function MealPlan() {
     selectedMealPlan ? selectedMealPlan.image : ""
   );
 
-  console.log(mealplan)
+  const [status, setStatus] = useState(
+    selectedMealPlan ? selectedMealPlan.status : ""
+  );
 
+  const handleComplete = () => {
+    const newStatus = status === "planned" ? "completed" : "planned";
+    setStatus(newStatus);
+
+    const updatedMealPlanList = mealplan.map((meal) =>
+      meal.id === id ? { ...meal, status: newStatus } : meal
+    );
+
+    setMealPlan(updatedMealPlanList);
+    localStorage.setItem("mealplanlist", JSON.stringify(updatedMealPlanList));
+  };
 
   return (
     <>
@@ -79,20 +99,47 @@ function MealPlan() {
             <Typography variant="h1" sx={{ py: "10px" }}>
               {name}
             </Typography>
-            <Chip label={`${category}`} />
+            <Chip sx={{ textTransform: "capitalize" }} label={`${category}`} />
             <Typography sx={{ py: "10px" }}>Prep Time: {preptime}</Typography>
+            <Box sx={{ display: "flex", gap: "20px" }}>
+              <Button
+                variant="contained"
+                color="primary"
+                sx={{ color: "white" }}
+                onClick={handleComplete}
+              >
+                {status === "completed"
+                  ? "Mark as Planned"
+                  : "Mark as Completed"}
+              </Button>
+              {status === "planned" ? (
+                <Button
+                  variant="contained"
+                  component={RouterLink}
+                  to={`/edit/${id}`}
+                >
+                  <EditIcon sx={{ paddingRight: "10px" }} />
+                  To edit page
+                </Button>
+              ) : null}
+            </Box>
           </Box>
         </Box>
         {/* steps and ingredients */}
-        <Grid container spacing={2}>
+        <Grid container spacing={5} sx={{ mt: "30px" }}>
           <Grid size={6}>
+            <Typography variant="h5" sx={{ mb: "10px" }}>
+              Ingredients:
+            </Typography>
             {/* mapping out the individual ingredients from the ingredients array */}
             {ingredients.map((ingredient) => (
-              <Box key={ingredient.id}>- {ingredient.name}</Box>
+              <Box key={ingredient.id}>• {ingredient.name}</Box>
             ))}
           </Grid>
           <Grid size={6}>
-            <Typography>Steps: </Typography>
+            <Typography variant="h5" sx={{ mb: "10px" }}>
+              Steps:
+            </Typography>
             {/* the steps to make the meal */}
             <Box style={{ whiteSpace: "pre-wrap" }}>{steps}</Box>
           </Grid>

@@ -34,6 +34,7 @@ function AddMeals() {
   //steps and prep time
   const [steps, setSteps] = useState("");
   const [preptime, setPreptime] = useState("");
+  const [status, setStatus] = useState("planned");
   //image
   const [image, setImage] = useState("");
 
@@ -91,6 +92,7 @@ function AddMeals() {
           ingredients: ingredients,
           steps: steps,
           preptime: preptime,
+          status: status,
           image: image
         },
       ];
