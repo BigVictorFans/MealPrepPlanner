@@ -33,6 +33,7 @@ function AddMeals() {
   const [item, setItem] = useState("");
   const [steps, setSteps] = useState("");
   const [preptime, setPreptime] = useState("");
+  const [status, setStatus] = useState("planned");
 
   // load the meal plan data from local storage
   const mealplanLocalStorage = localStorage.getItem("mealplanlist");
@@ -87,6 +88,7 @@ function AddMeals() {
           ingredients: ingredients,
           steps: steps,
           preptime: preptime,
+          status: status,
         },
       ];
       setMealPlan(updatedMealPlan);

@@ -19,8 +19,7 @@ import TabPanel from "@mui/lab/TabPanel";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ViewIcon from "@mui/icons-material/Visibility";
-import DoneIcon from "@mui/icons-material/Done";
-
+import CheckBoxIcon from "@mui/icons-material/CheckBox";
 
 function Homepage() {
   // useNavigate hook to navigate between pages
@@ -42,16 +41,33 @@ function Homepage() {
 
   // states for week / status (not in use for now)
   const [week, setWeek] = useState("w1");
-  const [status, setStatus] = useState("planned");
+  const [selectedStatus, setSelectedStatus] = useState("all");
 
   // tabs
-  const [tabvalue, setTabvalue] = useState("mon");
-  {
-    /* want to implement a feature that automatically selects the day based on computer date */
-  }
+  const [tabvalue, setTabvalue] = useState("");
+
+  // automatically get today's day with react useEffect
+  // useEffect only renders once with the empty array at the end (without [] it also render infinitely) (because that [] is the dependency array)
+  // useState renders constantly, which causes an infinite loop
+  React.useEffect(() => {
+    // Try to load saved tab from localStorage
+    const savedTab = localStorage.getItem("selectedtab");
+
+    if (savedTab) {
+      setTabvalue(savedTab);
+    } else {
+      // get the date
+      const d = new Date();
+      // make an array of the days because .getDay() gets a number value
+      const days = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
+      // set the tab value based on the days
+      setTabvalue(days[d.getDay()]);
+    }
+  }, []);
 
   const handleTabChange = (event, newValue) => {
     setTabvalue(newValue);
+    localStorage.setItem("selectedtab", newValue);
   };
 
   /* 8. delete */
@@ -76,6 +92,39 @@ function Homepage() {
     }
   };
 
+  /* filter the meals */
+  const filteredMeals = mealplan
+    .filter((meal) => {
+      // if selected week matches the week, then only move onto filter through day
+      if (week === meal.week) {
+        return true;
+      }
+      return false;
+    })
+    .filter((meal) => {
+      // if selected tab matches the day value in the meal, then show the meal
+      if (tabvalue === meal.day) {
+        return true;
+      }
+      return false;
+    })
+    .filter((meal) => {
+      // if selectedStatus === all, show all, else show planned / completed
+      if (selectedStatus === "all") {
+        return true;
+      } else if (selectedStatus === meal.status) {
+        return true;
+      }
+      return false;
+    })
+    .sort((a, b) => {
+      const order = ["breakfast", "lunch", "dinner"];
+      return (
+        order.indexOf(a.category.toLowerCase()) -
+        order.indexOf(b.category.toLowerCase())
+      );
+    });
+
   return (
     <>
       <Box
@@ -88,10 +137,24 @@ function Homepage() {
           py: "20px",
         }}
       >
+        <TabContext value={tabvalue}>
+          <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+            <TabList onChange={handleTabChange} sx={{ mx: "auto" }}>
+              <Tab label="Monday" value="mon" />
+              <Tab label="Tuesday" value="tue" />
+              <Tab label="Wednesday" value="wed" />
+              <Tab label="Thursday" value="thu" />
+              <Tab label="Friday" value="fri" />
+              <Tab label="Saturday" value="sat" />
+              <Tab label="Sunday" value="sun" />
+            </TabList>
+          </Box>
+          {/* <TabPanel value="1">Monday</TabPanel> */}
+        </TabContext>
         <Box
           sx={{
             minWidth: 260,
-            paddingRight: "10px",
+            paddingLeft: "10px",
             display: "flex",
             gap: "10px",
           }}
@@ -118,63 +181,59 @@ function Homepage() {
             <Select
               labelId="demo-simple-select-label"
               id="demo-simple-select"
-              value={status}
+              value={selectedStatus}
               label="status"
               onChange={(event) => {
-                setStatus(event.target.value);
+                setSelectedStatus(event.target.value);
               }}
             >
+              <MenuItem value="all">All</MenuItem>
               <MenuItem value="planned">Planned</MenuItem>
               <MenuItem value="completed">Completed</MenuItem>
             </Select>
           </FormControl>
         </Box>
-        <TabContext value={tabvalue}>
-          <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-            <TabList
-              onChange={handleTabChange}
-              aria-label="lab API tabs example"
-              sx={{ mx: "auto" }}
-            >
-              <Tab label="Monday" value="mon" />
-              <Tab label="Tuesday" value="tue" />
-              <Tab label="Wednesday" value="wed" />
-              <Tab label="Thursday" value="thu" />
-              <Tab label="Friday" value="fri" />
-              <Tab label="Saturday" value="sat" />
-              <Tab label="Sunday" value="sun" />
-            </TabList>
-          </Box>
-          {/* <TabPanel value="1">Monday</TabPanel> */}
-        </TabContext>
       </Box>
       {/* meal trackers */}
       <Container sx={{ m: 0, p: 2, mx: "auto", maxWidth: "100%" }}>
         {/* the cards */}
         <Grid container spacing={2}>
-          {mealplan
-            .filter((meal) => {
-              // if selected week matches the week, then only move onto filter through day
-              if (week === meal.week) {
-                return true;
-              }
-              return false;
-            })
-            .filter((meal) => {
-              // if selected tab matches the day value in the meal, then show the meal
-              if (tabvalue === meal.day) {
-                return true;
-              }
-              return false;
-            })
-            .map((meal) => (
+          {/* if no meal planned for that day (filteredMeals.length is 0), then show a button that go to add meal page */}
+          {filteredMeals.length === 0 ? (
+            <Grid item size={{ xs: 12 }} sx={{ mt: "5px" }}>
+              <Box sx={{ textAlign: "center", justifyContent: "center" }}>
+                <img
+                  src="https://i.kym-cdn.com/entries/icons/original/000/043/474/FbYXe1xXgAEpAAG.png"
+                  style={{ height: "400px", width: "550px" }}
+                />
+                <Typography variant="h6" sx={{ mb: 2 }}>
+                  No meals planned for this day.
+                </Typography>
+                <Button
+                  variant="contained"
+                  color="warning"
+                  onClick={() => navigate("/add")}
+                >
+                  Add a Meal
+                </Button>
+              </Box>
+            </Grid>
+          ) : (
+            filteredMeals.map((meal) => (
               <Grid size={{ xs: 12, sm: 12, md: 6, lg: 4 }} key={meal.id}>
-                <Card sx={{ minWidth: 350, bgcolor: "white" }}>
+                <Card
+                  sx={{ minWidth: 350, bgcolor: "white", minHeight: "453px" }}
+                >
                   <Typography
                     gutterBottom
                     variant="h5"
                     component="div"
-                    sx={{ p: 2, textAlign: "center", fontWeight: "bold" }}
+                    sx={{
+                      p: 2,
+                      textAlign: "center",
+                      fontWeight: "bold",
+                      textTransform: "capitalize",
+                    }}
                   >
                     {meal.category}
                   </Typography>
@@ -186,32 +245,45 @@ function Homepage() {
                     image="https://www.beyondthechickencoop.com/wp-content/uploads/2024/02/Baked-Italian-Sausage.jpg"
                   />
                   <CardContent>
-                    <Typography gutterBottom variant="h5" component="div">
+                    <Typography
+                      gutterBottom
+                      variant="h5"
+                      component="div"
+                      sx={{ alignItems: "center" }}
+                    >
                       {meal.name}
                     </Typography>
-                    <Typography
-                      variant="body2"
-                      sx={{ color: "text.secondary" }}
-                    >
-                      Estimated prep time: <br />
-                      {meal.preptime}
-                    </Typography>
+
+                    {meal.status === "completed" ? (
+                      <Box sx={{ display: "flex", alignItems: "center" }}>
+                        <CheckBoxIcon
+                          color="success"
+                          sx={{ fontSize: "24px" }}
+                        />
+                        <Typography
+                          variant="body2"
+                          sx={{ color: "text.secondary" }}
+                        >
+                          Completed
+                        </Typography>
+                      </Box>
+                    ) : (
+                      <Typography
+                        variant="body2"
+                        sx={{ color: "text.secondary" }}
+                      >
+                        Estimated prep time: <br />
+                        {meal.preptime}
+                      </Typography>
+                    )}
                   </CardContent>
                   <CardActions
                     sx={{ display: "flex", justifyContent: "end", p: 2 }}
                   >
-                    <IconButton>
-                      <DoneIcon
-                        onClick={TogglePrep}
-                        sx={{
-                          color: isCompleted ? "green" : "grey",
-                        }}
-                      />
-                    </IconButton>
                     <Button
                       variant="contained"
                       component={RouterLink}
-                      to={`meal/${meal.id}`}
+                      to={`/meal/${meal.id}`}
                     >
                       <ViewIcon />
                     </Button>
@@ -225,7 +297,8 @@ function Homepage() {
                   </CardActions>
                 </Card>
               </Grid>
-            ))}
+            ))
+          )}
         </Grid>
         {/* fab button */}
         <Fab

@@ -21,16 +21,6 @@ function ShoppingList() {
   // 1. load the data from the local storage (key is shoppinglist).
   const listInLocalStorage = JSON.parse(localStorage.getItem("shoppinglist"));
 
-  /* mapping data from mealplanlist to get ingredients to add into shopping list (doesnt work) */
-  // const mealPlanList = JSON.parse(localStorage.getItem("mealplanlist"));
-
-  // const ingredients = mealPlanList?.map((meal) => {
-  //   return meal.ingredients;
-  // });
-
-  // localStorage.setItem("shoppinglist", JSON.stringify(ingredients));
-  // const listInLocalStorage = JSON.parse(localStorage.getItem("shoppinglist"));
-
   // states for item and shopping list
   const [item, setItem] = useState("");
   const [shoppinglist, setShoppingList] = useState(listInLocalStorage || []);
@@ -44,24 +34,27 @@ function ShoppingList() {
   const handleAutoGenerate = () => {
     const confirmation = confirm(
       "Are you sure you want to auto generate the shopping list? This will overwrite your current shopping list."
-    )
+    );
     if (confirmation) {
-          // 1. Get the mealplanlist from localStorage
-          const mealPlanList = JSON.parse(localStorage.getItem("mealplanlist")) || [];
-          // 2. Extract and flatten all ingredients (no nested arrays)
-          const allIngredients = mealPlanList.flatMap(meal => meal.ingredients || []);
-          // 3. uniqueIngredients = allIngredients
-          const uniqueIngredients = allIngredients
-          // 4. Update state
-          setShoppingList(uniqueIngredients);
-          // 5. Save to localStorage
-          localStorage.setItem("shoppinglist", JSON.stringify(uniqueIngredients));
-          // 6. Feedback
-          alert("The Shopping list has been replaced with all ingredients from your meal plan!");
+      // 1. Get the mealplanlist from localStorage
+      const mealPlanList =
+        JSON.parse(localStorage.getItem("mealplanlist")) || [];
+      // 2. Extract and flatten all ingredients (no nested arrays)
+      const allIngredients = mealPlanList.flatMap(
+        (meal) => meal.ingredients || []
+      );
+      // 3. uniqueIngredients = allIngredients
+      const uniqueIngredients = allIngredients;
+      // 4. Update state
+      setShoppingList(allIngredients);
+      // 5. Save to localStorage
+      localStorage.setItem("shoppinglist", JSON.stringify(uniqueIngredients));
+      // 6. Feedback
+      alert(
+        "The Shopping list has been replaced with all ingredients from your meal plan!"
+      );
     }
   };
-
-
 
   // 4. function to add new item into the state and also save it into local storage
   const handleAddNew = () => {
@@ -197,7 +190,12 @@ function ShoppingList() {
             ))}
           </List>
         </Paper>
-        <Button variant="contained" color="primary" sx={{ mt: "20px" }} onClick={handleAutoGenerate}>
+        <Button
+          variant="contained"
+          color="primary"
+          sx={{ mt: "20px" }}
+          onClick={handleAutoGenerate}
+        >
           Auto Generate Shopping List
         </Button>
       </Container>

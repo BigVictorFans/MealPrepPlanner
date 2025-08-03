@@ -5,6 +5,7 @@ import AddMeals from "./pages/AddMeals";
 import Homepage from "./pages/HomePage";
 import ResponsiveAppBar from "./components/appbar";
 import MealPlan from "./pages/MealPlan";
+import EditMeal from "./pages/EditMeal";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
           <Route path="/add" element={<AddMeals />} />
           <Route path="/shoppinglist" element={<ShoppingList />} />
           <Route path="/meal/:id" element={<MealPlan />} />
+          <Route path="/edit/:id" element={<EditMeal />} />
         </Routes>
       </Router>
     </>
