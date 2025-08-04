@@ -11,6 +11,7 @@ import {
   DialogTitle,
   DialogActions,
   Tooltip,
+  DialogContentText,
 } from "@mui/material";
 import { useState } from "react";
 import { List, ListItem, ListItemText, IconButton } from "@mui/material";
@@ -32,30 +33,57 @@ function ShoppingList() {
     localStorage.setItem("shoppinglist", JSON.stringify(updatedShoppingList));
   };
 
+  const [editItem, setEditItem] = useState(null); // the object being edited
+  const [editName, setEditName] = useState(""); // the new name
+  const [deleteOpen, setDeleteOpen] = useState(false); // delete dialog open / close state
+  const [editOpen, setEditOpen] = useState(false); // edit dialog open / close state
+  const [generateOpen, setGenerateOpen] = useState(false); // auto generate dialog open / close state
+
+  const handleClickEditOpen = (item) => {
+    setEditItem(item); // store the item object
+    setEditName(item.name); // initialize edit field with current name
+    setEditOpen(true); // open edit dialog
+  };
+
+  const handleEditClose = () => {
+    setEditOpen(false); // close edit dialog
+  };
+
+  const handleClickDeleteOpen = () => {
+    setDeleteOpen(true); // open delete dialog
+  };
+
+  const handleDeleteClose = () => {
+    setDeleteOpen(false); // close delete dialog
+  };
+
+  const handleGenerateOpen = () => {
+    setGenerateOpen(true);
+  };
+
+  const handleGenerateClose = () => {
+    setGenerateOpen(false);
+  };
+
   // 3. handle auto generator
   const handleAutoGenerate = () => {
-    const confirmation = confirm(
-      "Are you sure you want to auto generate the shopping list? This will overwrite your current shopping list."
+    // 1. Get the mealplanlist from localStorage
+    const mealPlanList = JSON.parse(localStorage.getItem("mealplanlist")) || [];
+    // 2. Extract and flatten all ingredients (no nested arrays)
+    const allIngredients = mealPlanList.flatMap(
+      (meal) => meal.ingredients || []
     );
-    if (confirmation) {
-      // 1. Get the mealplanlist from localStorage
-      const mealPlanList =
-        JSON.parse(localStorage.getItem("mealplanlist")) || [];
-      // 2. Extract and flatten all ingredients (no nested arrays)
-      const allIngredients = mealPlanList.flatMap(
-        (meal) => meal.ingredients || []
-      );
-      // 3. uniqueIngredients = allIngredients
-      const uniqueIngredients = allIngredients;
-      // 4. Update state
-      setShoppingList(allIngredients);
-      // 5. Save to localStorage
-      localStorage.setItem("shoppinglist", JSON.stringify(uniqueIngredients));
-      // 6. Feedback
-      toast(
-        "The Shopping list has been replaced with all ingredients from your meal plan!"
-      );
-    }
+    // 3. uniqueIngredients = allIngredients
+    const uniqueIngredients = allIngredients;
+    // 4. Update state
+    setShoppingList(allIngredients);
+    // 5. Save to localStorage
+    localStorage.setItem("shoppinglist", JSON.stringify(uniqueIngredients));
+    // 6. Feedback
+    toast(
+      "The Shopping list has been replaced with all ingredients from your meal plan!"
+    );
+    handleGenerateClose();
   };
 
   // 4. function to add new item into the state and also save it into local storage
@@ -77,29 +105,6 @@ function ShoppingList() {
       // 4c. update the local storage with the updated shopping list
       updatedLocalStorage(updatedShoppingList);
     }
-  };
-
-  const [editItem, setEditItem] = useState(null); // the object being edited
-  const [editName, setEditName] = useState(""); // the new name
-  const [deleteOpen, setDeleteOpen] = useState(false); // delete dialog open / close state
-  const [editOpen, setEditOpen] = useState(false); // edit dialog open / close state
-
-  const handleClickEditOpen = (item) => {
-    setEditItem(item); // store the item object
-    setEditName(item.name); // initialize edit field with current name
-    setEditOpen(true); // open edit dialog
-  };
-
-  const handleClickDeleteOpen = () => {
-    setDeleteOpen(true); // open delete dialog
-  };
-
-  const handleEditClose = () => {
-    setEditOpen(false); // close edit dialog
-  };
-
-  const handleDeleteClose = () => {
-    setDeleteOpen(false); // close delete dialog
   };
 
   // 5. function to update the item name
@@ -256,14 +261,31 @@ function ShoppingList() {
             ))}
           </List>
         </Paper>
+        {/* auto generate button */}
         <Button
           variant="contained"
           color="primary"
           sx={{ mt: "20px" }}
-          onClick={handleAutoGenerate}
+          onClick={handleGenerateOpen}
         >
           Auto Generate Shopping List
         </Button>
+        {/* delete dialog start */}
+        <Dialog open={generateOpen} onClose={handleGenerateClose}>
+          <DialogTitle>
+            Are you sure you want to auto generate the shopping list?
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              This will overwrite your current shopping list.
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleGenerateClose}>Cancel</Button>
+            <Button onClick={handleAutoGenerate}>Proceed</Button>
+          </DialogActions>
+        </Dialog>
+        {/* delete dialog end */}
       </Container>
     </>
   );
