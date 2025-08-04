@@ -272,7 +272,9 @@ function Homepage() {
                         sx={{ color: "text.secondary" }}
                       >
                         Estimated prep time: <br />
-                        {meal.preptime}
+                        {meal.preptimehour === ""
+                          ? `${meal.preptimemin} minutes`
+                          : `${meal.preptimehour} hours ${meal.preptimemin} minutes`}
                       </Typography>
                     )}
                   </CardContent>
