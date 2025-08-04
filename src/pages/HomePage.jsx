@@ -1,24 +1,34 @@
 import * as React from "react";
 import { useState } from "react";
 import { Link as RouterLink, useNavigate } from "react-router";
-import { Container, Box, Typography, Grid, IconButton } from "@mui/material";
-import Card from "@mui/material/Card";
-import CardActions from "@mui/material/CardActions";
-import CardContent from "@mui/material/CardContent";
-import Button from "@mui/material/Button";
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
-import CardMedia from "@mui/material/CardMedia";
-import Fab from "@mui/material/Fab";
-import Tab from "@mui/material/Tab";
+import {
+  Container,
+  Box,
+  Typography,
+  Grid,
+  Card,
+  CardMedia,
+  CardActions,
+  CardContent,
+  Button,
+  InputLabel,
+  MenuItem,
+  FormControl,
+  Select,
+  Fab,
+  Tab,
+  Tooltip,
+  Dialog,
+  DialogTitle,
+  DialogActions,
+} from "@mui/material";
 import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ViewIcon from "@mui/icons-material/Visibility";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
+import { toast } from "sonner";
 
 function Homepage() {
   // useNavigate hook to navigate between pages
@@ -31,14 +41,14 @@ function Homepage() {
     mealplanLocalStorage ? JSON.parse(mealplanLocalStorage) : []
   );
 
+  const [selectedStatus, setSelectedStatus] = useState("all");
+
   // toggle complete / planned
   const [isCompleted, setisCompleted] = useState(false);
 
   const TogglePrep = () => {
     setisCompleted(!isCompleted);
   };
-
-  const [selectedStatus, setSelectedStatus] = useState("all");
 
   // tabs
   const [tabvalue, setTabvalue] = useState("");
@@ -67,26 +77,34 @@ function Homepage() {
     localStorage.setItem("selectedtab", newValue);
   };
 
+  // dialog state
+  const [open, setOpen] = useState(false);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
   /* 8. delete */
   const handleMealsDelete = (id) => {
-    // 8. do a confirmation alert to confirm delete
-    const confirmation = confirm("Do you want to delete this meal plan?");
-    if (confirmation) {
-      // 9. use filter and remove the meal from the mealplan state
-      const updatedMealPlan = mealplan.filter((meal) => {
-        if (meal.id !== id) {
-          return true;
-        } else {
-          return false;
-        }
-      });
-      // 10. update the notes state with the updatedMealPlan
-      setMealPlan(updatedMealPlan);
-      // 11. update the local storage with the updatedMealPlan
-      localStorage.setItem("mealplanlist", JSON.stringify(updatedMealPlan));
-      // 12. show success notification
-      alert("Notes deleted successfully");
-    }
+    // 9. use filter and remove the meal from the mealplan state
+    const updatedMealPlan = mealplan.filter((meal) => {
+      if (meal.id !== id) {
+        return true;
+      } else {
+        return false;
+      }
+    });
+    // 10. update the notes state with the updatedMealPlan
+    setMealPlan(updatedMealPlan);
+    // 11. update the local storage with the updatedMealPlan
+    localStorage.setItem("mealplanlist", JSON.stringify(updatedMealPlan));
+    // 12. show success notification
+    toast("Notes deleted successfully");
+    handleClose();
   };
 
   /* filter the meals */
@@ -127,6 +145,7 @@ function Homepage() {
           py: "20px",
         }}
       >
+        {/* tabs */}
         <TabContext value={tabvalue}>
           <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
             <TabList onChange={handleTabChange} sx={{ mx: "auto" }}>
@@ -140,9 +159,10 @@ function Homepage() {
             </TabList>
           </Box>
         </TabContext>
+        {/* status filter */}
         <Box
           sx={{
-            minWidth: 200,
+            minWidth: 150,
             paddingLeft: "20px",
           }}
         >
@@ -164,9 +184,8 @@ function Homepage() {
           </FormControl>
         </Box>
       </Box>
-      {/* meal trackers */}
+      {/* meal plans */}
       <Container sx={{ m: 0, p: 2, mx: "auto", maxWidth: "100%" }}>
-        {/* the cards */}
         <Grid container spacing={2}>
           {/* if no meal planned for that day (filteredMeals.length is 0), then show a button that go to add meal page */}
           {filteredMeals.length === 0 ? (
@@ -189,11 +208,13 @@ function Homepage() {
               </Box>
             </Grid>
           ) : (
+            // map the planned meals
             filteredMeals.map((meal) => (
               <Grid size={{ xs: 12, sm: 12, md: 6, lg: 4 }} key={meal.id}>
                 <Card
                   sx={{ minWidth: 350, bgcolor: "white", minHeight: "453px" }}
                 >
+                  {/* card header with category */}
                   <Typography
                     gutterBottom
                     variant="h5"
@@ -207,17 +228,20 @@ function Homepage() {
                   >
                     {meal.category}
                   </Typography>
+                  {/* image of meal */}
                   <CardMedia
                     component="img"
                     alt={meal.name}
                     height="200"
                     width="100%"
                     image={
+                      // if no image in local storage, show "image not available" image
                       meal.image ||
                       "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/No_image_available_600_x_450.svg/2560px-No_image_available_600_x_450.svg.png"
                     }
                   />
                   <CardContent>
+                    {/* meal name */}
                     <Typography
                       gutterBottom
                       variant="h5"
@@ -226,8 +250,9 @@ function Homepage() {
                     >
                       {meal.name}
                     </Typography>
-
+                    {/* status / estimated prep time */}
                     {meal.status === "completed" ? (
+                      // if completed, show completed
                       <Box sx={{ display: "flex", alignItems: "center" }}>
                         <CheckBoxIcon
                           color="success"
@@ -241,6 +266,7 @@ function Homepage() {
                         </Typography>
                       </Box>
                     ) : (
+                      // if planned, show estimated prep time
                       <Typography
                         variant="body2"
                         sx={{ color: "text.secondary" }}
@@ -250,23 +276,42 @@ function Homepage() {
                       </Typography>
                     )}
                   </CardContent>
+                  {/* action buttons */}
                   <CardActions
                     sx={{ display: "flex", justifyContent: "end", p: 2 }}
                   >
-                    <Button
-                      variant="contained"
-                      component={RouterLink}
-                      to={`/meal/${meal.id}`}
-                    >
-                      <ViewIcon />
-                    </Button>
-                    <Button
-                      variant="contained"
-                      onClick={() => handleMealsDelete(meal.id)}
-                      sx={{ bgcolor: "red" }}
-                    >
-                      <DeleteIcon />
-                    </Button>
+                    {/* view meal button */}
+                    <Tooltip title="View" placement="top">
+                      <Button
+                        variant="contained"
+                        component={RouterLink}
+                        to={`/meal/${meal.id}`}
+                      >
+                        <ViewIcon />
+                      </Button>
+                    </Tooltip>
+                    {/* delete meal button */}
+                    <Tooltip title="Delete" placement="top">
+                      <Button
+                        variant="contained"
+                        onClick={() => handleClickOpen()}
+                        sx={{ bgcolor: "red" }}
+                      >
+                        <DeleteIcon />
+                      </Button>
+                    </Tooltip>
+                    {/* dialog to confirm delete meal plan */}
+                    <Dialog open={open} onClose={handleClose}>
+                      <DialogTitle>
+                        Are you sure you want to delete this meal plan?
+                      </DialogTitle>
+                      <DialogActions>
+                        <Button onClick={handleClose}>Cancel</Button>
+                        <Button onClick={() => handleMealsDelete(meal.id)}>
+                          Delete
+                        </Button>
+                      </DialogActions>
+                    </Dialog>
                   </CardActions>
                 </Card>
               </Grid>
@@ -274,14 +319,16 @@ function Homepage() {
           )}
         </Grid>
         {/* fab button */}
-        <Fab
-          color="warning"
-          aria-label="add"
-          sx={{ position: "fixed", bottom: 16, right: 16 }}
-          onClick={() => navigate("/add")}
-        >
-          <AddIcon />
-        </Fab>
+        <Tooltip title="Add meal plan">
+          <Fab
+            color="warning"
+            aria-label="add"
+            sx={{ position: "fixed", bottom: 16, right: 16 }}
+            onClick={() => navigate("/add")}
+          >
+            <AddIcon />
+          </Fab>
+        </Tooltip>
       </Container>
     </>
   );

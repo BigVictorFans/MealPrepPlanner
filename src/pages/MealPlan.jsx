@@ -2,6 +2,7 @@ import { Button, Container, Typography, Grid, Chip, Box } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import { useState } from "react";
 import { Link as RouterLink, useParams } from "react-router";
+import { toast } from "sonner";
 
 function MealPlan() {
   // get id from url params (uncomment when using real id)
@@ -61,26 +62,31 @@ function MealPlan() {
   const [preptime, setPreptime] = useState(
     selectedMealPlan ? selectedMealPlan.preptime : ""
   );
-
   // image
   const [image, setImage] = useState(
     selectedMealPlan ? selectedMealPlan.image : ""
   );
-
   const [status, setStatus] = useState(
     selectedMealPlan ? selectedMealPlan.status : ""
   );
 
   const handleComplete = () => {
+    // set new status
     const newStatus = status === "planned" ? "completed" : "planned";
     setStatus(newStatus);
 
+    // update status
     const updatedMealPlanList = mealplan.map((meal) =>
       meal.id === id ? { ...meal, status: newStatus } : meal
     );
 
     setMealPlan(updatedMealPlanList);
     localStorage.setItem("mealplanlist", JSON.stringify(updatedMealPlanList));
+    toast(
+      status === "planned"
+        ? "Meal plan marked as completed!"
+        : "Meal plan marked as planned."
+    );
   };
 
   return (
@@ -115,6 +121,7 @@ function MealPlan() {
                   ? "Mark as Planned"
                   : "Mark as Completed"}
               </Button>
+              {/* if status is planned, show edit button, else show nothing */}
               {status === "planned" ? (
                 <Button
                   variant="contained"
@@ -122,7 +129,7 @@ function MealPlan() {
                   to={`/edit/${id}`}
                 >
                   <EditIcon sx={{ paddingRight: "10px" }} />
-                  To edit page
+                  Edit Meal Plan
                 </Button>
               ) : null}
             </Box>

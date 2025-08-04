@@ -19,6 +19,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useState } from "react";
 import { Link as RouterLink, useParams, useNavigate } from "react-router";
 import { nanoid } from "nanoid";
+import { toast } from "sonner";
 
 function EditMeal() {
   //define navigate function
@@ -97,7 +98,7 @@ function EditMeal() {
   // add an ingredient to ingredients array
   const addIngredient = () => {
     if (item === "") {
-      alert("Please fill in the fields.");
+      toast("Please fill in the fields.");
     } else {
       const updatedIngredients = [...ingredients, { id: nanoid(), name: item }];
       setIngredients(updatedIngredients);
@@ -118,8 +119,8 @@ function EditMeal() {
 
   // handle update function
   const HandleUpdate = () => {
-    if 
-    (day === "" ||
+    if (
+      day === "" ||
       category === "" ||
       name === "" ||
       ingredients === "" ||
@@ -128,8 +129,7 @@ function EditMeal() {
     ) {
       alert("Please fill in all required fields.");
       return;
-    }
-    else {
+    } else {
       const updatedMealPlan = [...mealplan];
       setMealPlan(
         updatedMealPlan.map((mealplan) => {
@@ -150,13 +150,12 @@ function EditMeal() {
       setMealPlan(updatedMealPlan);
       localStorage.setItem("mealplanlist", JSON.stringify(updatedMealPlan));
       // show success message
-      alert("Meal plan has been updated");
+      toast("Meal plan has been updated");
       // redirect back to home page
-      navigate("/");
+      navigate(`/meal/${id}`);
     }
-      
+  };
 
-  }
   return (
     <>
       <Container maxWidth="lg" sx={{ py: "30px" }}>
@@ -167,11 +166,9 @@ function EditMeal() {
             <ArrowBackIcon />
             Back to Meal Page
           </Button>
-          <Typography variant="h2">Edit Meal Plan</Typography>
+          <Typography variant="h3">Edit Meal Plan</Typography>
           {/* update button */}
-          <Button variant="contained"
-            onClick={HandleUpdate}
-          >
+          <Button variant="contained" onClick={HandleUpdate}>
             Update Meal Plan
           </Button>
         </Box>
@@ -179,7 +176,6 @@ function EditMeal() {
         <Box
           sx={{
             display: "flex",
-            // justifyContent: "space-around",
             alignItems: "center",
             gap: "250px",
             my: "60px",

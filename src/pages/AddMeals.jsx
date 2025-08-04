@@ -18,11 +18,15 @@ import {
 import ClearIcon from "@mui/icons-material/Clear";
 import { useState } from "react";
 import { nanoid } from "nanoid";
+import { toast } from "sonner";
 
 function AddMeals() {
   const navigate = useNavigate();
 
-  const [day, setDay] = useState("");
+  // get the tab that the user was on
+  const savedTab = localStorage.getItem("selectedtab");
+
+  const [day, setDay] = useState(savedTab);
   const [category, setCategory] = useState("");
   // meal name
   const [name, setName] = useState("");
@@ -47,7 +51,7 @@ function AddMeals() {
   // add an ingredient to ingredients array
   const addIngredient = () => {
     if (item === "") {
-      alert("Please fill in the fields.");
+      toast("Please fill in the ingredients field.");
     } else {
       const updatedIngredients = [...ingredients, { id: nanoid(), name: item }];
       setIngredients(updatedIngredients);
@@ -76,7 +80,7 @@ function AddMeals() {
       steps === "" ||
       preptime === ""
     ) {
-      alert("Please fill up all the fields");
+      toast("Please fill up all the fields.");
     } else {
       const updatedMealPlan = [
         ...mealplan,
@@ -96,13 +100,14 @@ function AddMeals() {
       localStorage.setItem("mealplanlist", JSON.stringify(updatedMealPlan));
       console.log("Meal plan added successfully!");
       navigate("/");
+      toast("Meal plan added successfully!");
     }
   };
 
   return (
     <>
       <Container maxWidth="md" sx={{ py: "60px" }}>
-        <Typography variant="h3">Add a new meal plan</Typography>
+        <Typography variant="h4">Add a new meal plan</Typography>
         <Paper
           elevation={3}
           sx={{
