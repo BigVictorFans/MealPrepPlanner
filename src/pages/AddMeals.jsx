@@ -74,8 +74,7 @@ function AddMeals() {
       name === "" ||
       ingredients === "" ||
       steps === "" ||
-      preptime === "" ||
-      image === ""
+      preptime === ""
     ) {
       alert("Please fill up all the fields");
     } else {
@@ -95,6 +94,7 @@ function AddMeals() {
       ];
       setMealPlan(updatedMealPlan);
       localStorage.setItem("mealplanlist", JSON.stringify(updatedMealPlan));
+      console.log("Meal plan added successfully!");
       navigate("/");
     }
   };
