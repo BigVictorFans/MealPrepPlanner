@@ -29,17 +29,14 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import ViewIcon from "@mui/icons-material/Visibility";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import { toast } from "sonner";
+import { useLocalStorage } from "../hooks/useLocalStorage";
 
 function Homepage() {
   // useNavigate hook to navigate between pages
   const navigate = useNavigate();
 
-  // load the meal plan data from local storage
-  const mealplanLocalStorage = localStorage.getItem("mealplanlist");
   // create a state to store the meal plan data from local storage
-  const [mealplan, setMealPlan] = useState(
-    mealplanLocalStorage ? JSON.parse(mealplanLocalStorage) : []
-  );
+  const [mealplan, setMealPlan] = useLocalStorage("mealplanlist", []);
 
   const [selectedStatus, setSelectedStatus] = useState("all");
 
@@ -56,12 +53,14 @@ function Homepage() {
   // automatically get today's day with react useEffect
   // useEffect only renders once with the empty array at the end (without [] it also render infinitely) (because that [] is the dependency array)
   // useState renders constantly, which causes an infinite loop
+
+  const [day, setDay] = useLocalStorage("selectedtab");
+
   React.useEffect(() => {
     // Try to load saved tab from localStorage
-    const savedTab = localStorage.getItem("selectedtab");
 
-    if (savedTab) {
-      setTabvalue(savedTab);
+    if (day) {
+      setTabvalue(day);
     } else {
       // get the date
       const d = new Date();
@@ -74,7 +73,7 @@ function Homepage() {
 
   const handleTabChange = (event, newValue) => {
     setTabvalue(newValue);
-    localStorage.setItem("selectedtab", newValue);
+    setDay(newValue);
   };
 
   // dialog state
@@ -100,8 +99,6 @@ function Homepage() {
     });
     // 10. update the notes state with the updatedMealPlan
     setMealPlan(updatedMealPlan);
-    // 11. update the local storage with the updatedMealPlan
-    localStorage.setItem("mealplanlist", JSON.stringify(updatedMealPlan));
     // 12. show success notification
     toast("Notes deleted successfully");
     handleClose();

@@ -19,19 +19,12 @@ import { Edit, Delete } from "@mui/icons-material";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import { nanoid } from "nanoid";
 import { toast } from "sonner";
+import { useLocalStorage } from "../hooks/useLocalStorage";
 
 function ShoppingList() {
-  // 1. load the data from the local storage (key is shoppinglist).
-  const listInLocalStorage = JSON.parse(localStorage.getItem("shoppinglist"));
-
   // states for item and shopping list
   const [item, setItem] = useState("");
-  const [shoppinglist, setShoppingList] = useState(listInLocalStorage || []);
-
-  // function for updating the local storage
-  const updatedLocalStorage = (updatedShoppingList) => {
-    localStorage.setItem("shoppinglist", JSON.stringify(updatedShoppingList));
-  };
+  const [shoppinglist, setShoppingList] = useLocalStorage("shoppinglist", []);
 
   const [editItem, setEditItem] = useState(null); // the object being edited
   const [editName, setEditName] = useState(""); // the new name
@@ -73,13 +66,9 @@ function ShoppingList() {
     const allIngredients = mealPlanList.flatMap(
       (meal) => meal.ingredients || []
     );
-    // 3. uniqueIngredients = allIngredients
-    const uniqueIngredients = allIngredients;
-    // 4. Update state
+    // 3. Update state
     setShoppingList(allIngredients);
-    // 5. Save to localStorage
-    localStorage.setItem("shoppinglist", JSON.stringify(uniqueIngredients));
-    // 6. Feedback
+    // 4. Feedback
     toast(
       "The Shopping list has been replaced with all ingredients from your meal plan!"
     );
@@ -102,8 +91,6 @@ function ShoppingList() {
       toast("Item has been added to the shopping list!");
       // reset the field
       setItem("");
-      // 4c. update the local storage with the updated shopping list
-      updatedLocalStorage(updatedShoppingList);
     }
   };
 
@@ -127,8 +114,6 @@ function ShoppingList() {
 
     // show notification of success message
     toast("Item has been successfully updated.");
-    // 5c. update the local storage with the udpated shopping list
-    updatedLocalStorage(updatedShoppingList);
     // close the dialog
     handleEditClose();
   };
@@ -146,8 +131,6 @@ function ShoppingList() {
     setShoppingList(updatedShoppingList);
     // show notification of success message
     toast("Item has been successfully deleted.");
-    // 6b. update the local storage with the updated shopping list
-    updatedLocalStorage(updatedShoppingList);
     // close the dialog
     handleDeleteClose();
   };
@@ -236,7 +219,7 @@ function ShoppingList() {
                     {/* edit dialog end */}
                     {/* delete button */}
                     <Tooltip title="Delete" placement="top">
-                      <IconButton onClick={() => handleClickDeleteOpen()}>
+                      <IconButton onClick={handleClickDeleteOpen}>
                         <Delete />
                       </IconButton>
                     </Tooltip>

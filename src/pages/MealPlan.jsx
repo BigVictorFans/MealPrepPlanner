@@ -3,17 +3,14 @@ import EditIcon from "@mui/icons-material/Edit";
 import { useState } from "react";
 import { Link as RouterLink, useParams } from "react-router";
 import { toast } from "sonner";
+import { useLocalStorage } from "../hooks/useLocalStorage";
 
 function MealPlan() {
   // get id from url params (uncomment when using real id)
   const { id } = useParams();
 
-  // load the meal plan data from local storage
-  const mealplanLocalStorage = localStorage.getItem("mealplanlist");
   // create a state to store the meal plan data from local storage
-  const [mealplan, setMealPlan] = useState(
-    mealplanLocalStorage ? JSON.parse(mealplanLocalStorage) : []
-  );
+  const [mealplan, setMealPlan] = useLocalStorage("mealplanlist", []);
 
   // loading the existing data from the meal plan that has the same id as the id in the url
   const selectedMealPlan = mealplan.find((m) => m.id === id);
@@ -86,7 +83,6 @@ function MealPlan() {
     );
 
     setMealPlan(updatedMealPlanList);
-    localStorage.setItem("mealplanlist", JSON.stringify(updatedMealPlanList));
     toast(
       status === "planned"
         ? "Meal plan marked as completed!"

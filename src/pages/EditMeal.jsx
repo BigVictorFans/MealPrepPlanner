@@ -21,6 +21,7 @@ import { useState } from "react";
 import { Link as RouterLink, useParams, useNavigate } from "react-router";
 import { nanoid } from "nanoid";
 import { toast } from "sonner";
+import { useLocalStorage } from "../hooks/useLocalStorage";
 
 function EditMeal() {
   //define navigate function
@@ -28,12 +29,8 @@ function EditMeal() {
   // get id from url params (uncomment when using real id)
   const { id } = useParams();
 
-  // load the meal plan data from local storage
-  const mealplanLocalStorage = localStorage.getItem("mealplanlist");
   // create a state to store the meal plan data from local storage
-  const [mealplan, setMealPlan] = useState(
-    mealplanLocalStorage ? JSON.parse(mealplanLocalStorage) : []
-  );
+  const [mealplan, setMealPlan] = useLocalStorage("mealplanlist", []);
 
   // loading the existing data from the meal plan that has the same id as the id in the url
   const selectedMealPlan = mealplan.find((m) => m.id === id);
@@ -156,7 +153,6 @@ function EditMeal() {
       );
       // update the notes in local storage
       setMealPlan(updatedMealPlan);
-      localStorage.setItem("mealplanlist", JSON.stringify(updatedMealPlan));
       // show success message
       toast("Meal plan has been updated");
       // redirect back to home page

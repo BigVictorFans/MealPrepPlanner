@@ -20,15 +20,12 @@ import ClearIcon from "@mui/icons-material/Clear";
 import { useState } from "react";
 import { nanoid } from "nanoid";
 import { toast } from "sonner";
+import { useLocalStorage } from "../hooks/useLocalStorage";
 
 function AddMeals() {
   const navigate = useNavigate();
 
-  // get the tab that the user was on
-  const savedTab = localStorage.getItem("selectedtab");
-
-  const [day, setDay] = useState(savedTab);
-
+  const [day, setDay] = useLocalStorage("selectedtab");
   const [category, setCategory] = useState("");
 
   // meal name
@@ -50,12 +47,8 @@ function AddMeals() {
   //image
   const [image, setImage] = useState("");
 
-  // load the meal plan data from local storage
-  const mealplanLocalStorage = localStorage.getItem("mealplanlist");
   // create a state to store the meal plan data from local storage
-  const [mealplan, setMealPlan] = useState(
-    mealplanLocalStorage ? JSON.parse(mealplanLocalStorage) : []
-  );
+  const [mealplan, setMealPlan] = useLocalStorage("mealplanlist", []);
 
   // add an ingredient to ingredients array
   const addIngredient = () => {
@@ -113,7 +106,6 @@ function AddMeals() {
         },
       ];
       setMealPlan(updatedMealPlan);
-      localStorage.setItem("mealplanlist", JSON.stringify(updatedMealPlan));
       console.log("Meal plan added successfully!");
       navigate("/");
       toast("Meal plan added successfully!");
