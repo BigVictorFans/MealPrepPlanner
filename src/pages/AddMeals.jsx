@@ -27,17 +27,24 @@ function AddMeals() {
   const savedTab = localStorage.getItem("selectedtab");
 
   const [day, setDay] = useState(savedTab);
+
   const [category, setCategory] = useState("");
+
   // meal name
   const [name, setName] = useState("");
+
   // ingredients array (all ingredients)
   const [ingredients, setIngredients] = useState([]);
+
   // individual ingredients
   const [item, setItem] = useState("");
-  //steps and prep time
+
   const [steps, setSteps] = useState("");
+
   const [preptime, setPreptime] = useState("");
+
   const [status, setStatus] = useState("planned");
+
   //image
   const [image, setImage] = useState("");
 
@@ -50,7 +57,7 @@ function AddMeals() {
 
   // add an ingredient to ingredients array
   const addIngredient = () => {
-    if (item === "") {
+    if (item.trim() === "") {
       toast("Please fill in the ingredients field.");
     } else {
       const updatedIngredients = [...ingredients, { id: nanoid(), name: item }];
@@ -75,7 +82,7 @@ function AddMeals() {
     if (
       day === "" ||
       category === "" ||
-      name === "" ||
+      name.trim() === "" ||
       ingredients === "" ||
       steps === "" ||
       preptime === ""

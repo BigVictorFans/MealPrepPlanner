@@ -89,7 +89,7 @@ function ShoppingList() {
   // 4. function to add new item into the state and also save it into local storage
   const handleAddNew = () => {
     // 4a. make sure the field is not empty, show error
-    if (item === "") {
+    if (item.trim() === "") {
       toast("Please fill in the field.");
     } else {
       // 4b. add the new item to the state
@@ -145,7 +145,7 @@ function ShoppingList() {
     });
     setShoppingList(updatedShoppingList);
     // show notification of success message
-    toast("Category has been successfully deleted.");
+    toast("Item has been successfully deleted.");
     // 6b. update the local storage with the updated shopping list
     updatedLocalStorage(updatedShoppingList);
     // close the dialog
