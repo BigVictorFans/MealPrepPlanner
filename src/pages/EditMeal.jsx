@@ -66,30 +66,28 @@ function EditMeal() {
   // set states for every single object (day, categories, name, ingredients, steps, preptime)
   // make it so that if it is the selected meal plan that the user is viewing, show the data inside of that selected meal plan
   const [day, setDay] = useState(selectedMealPlan ? selectedMealPlan.day : "");
-
+  // meal name
   const [name, setName] = useState(
     selectedMealPlan ? selectedMealPlan.name : ""
   );
-
+  // category (breakfast, lunch, dinner)
   const [category, setCategory] = useState(
     selectedMealPlan ? selectedMealPlan.category : ""
   );
-
   // ingredients array (all ingredients)
   const [ingredients, setIngredients] = useState(
     selectedMealPlan ? selectedMealPlan.ingredients : []
   );
-
   // individual ingredients
   const [item, setItem] = useState("");
-
+  // steps
   const [steps, setSteps] = useState(
     selectedMealPlan ? selectedMealPlan.steps : ""
   );
+  // prep time
   const [preptime, setPreptime] = useState(
     selectedMealPlan ? selectedMealPlan.preptime : ""
   );
-
   // image
   const [image, setImage] = useState(
     selectedMealPlan ? selectedMealPlan.image : ""
@@ -97,8 +95,8 @@ function EditMeal() {
 
   // add an ingredient to ingredients array
   const addIngredient = () => {
-    if (item === "") {
-      toast("Please fill in the fields.");
+    if (item.trim() === "") {
+      toast("Please fill in the ingredients field.");
     } else {
       const updatedIngredients = [...ingredients, { id: nanoid(), name: item }];
       setIngredients(updatedIngredients);
@@ -122,12 +120,12 @@ function EditMeal() {
     if (
       day === "" ||
       category === "" ||
-      name === "" ||
+      name.trim() === "" ||
       ingredients === "" ||
       steps === "" ||
       preptime === ""
     ) {
-      alert("Please fill in all required fields.");
+      toast("Please fill in all required fields.");
       return;
     } else {
       const updatedMealPlan = [...mealplan];
@@ -141,7 +139,6 @@ function EditMeal() {
             mealplan.steps = steps;
             mealplan.preptime = preptime;
             mealplan.image = image;
-            mealplan.status = "planned"; // reset status to planned when updating
           }
           return mealplan;
         })
