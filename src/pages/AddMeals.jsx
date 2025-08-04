@@ -98,6 +98,7 @@ function AddMeals() {
       ];
       setMealPlan(updatedMealPlan);
       localStorage.setItem("mealplanlist", JSON.stringify(updatedMealPlan));
+      console.log("Meal plan added successfully!");
       navigate("/");
       toast("Meal plan added successfully!");
     }
