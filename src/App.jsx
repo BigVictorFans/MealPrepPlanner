@@ -6,6 +6,7 @@ import Homepage from "./pages/HomePage";
 import ResponsiveAppBar from "./components/appbar";
 import MealPlan from "./pages/MealPlan";
 import EditMeal from "./pages/EditMeal";
+import { Toaster } from "sonner";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
           <Route path="/meal/:id" element={<MealPlan />} />
           <Route path="/edit/:id" element={<EditMeal />} />
         </Routes>
+        <Toaster position="bottom-right" />
       </Router>
     </>
   );

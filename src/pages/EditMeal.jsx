@@ -17,10 +17,13 @@ import {
 import ClearIcon from "@mui/icons-material/Clear";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useState } from "react";
-import { Link as RouterLink, useParams } from "react-router";
+import { Link as RouterLink, useParams, useNavigate } from "react-router";
 import { nanoid } from "nanoid";
+import { toast } from "sonner";
 
 function EditMeal() {
+  //define navigate function
+  const navigate = useNavigate();
   // get id from url params (uncomment when using real id)
   const { id } = useParams();
 
@@ -95,7 +98,7 @@ function EditMeal() {
   // add an ingredient to ingredients array
   const addIngredient = () => {
     if (item === "") {
-      alert("Please fill in the fields.");
+      toast("Please fill in the fields.");
     } else {
       const updatedIngredients = [...ingredients, { id: nanoid(), name: item }];
       setIngredients(updatedIngredients);
@@ -114,6 +117,45 @@ function EditMeal() {
     setIngredients(updatedIngredients);
   };
 
+  // handle update function
+  const HandleUpdate = () => {
+    if (
+      day === "" ||
+      category === "" ||
+      name === "" ||
+      ingredients === "" ||
+      steps === "" ||
+      preptime === ""
+    ) {
+      alert("Please fill in all required fields.");
+      return;
+    } else {
+      const updatedMealPlan = [...mealplan];
+      setMealPlan(
+        updatedMealPlan.map((mealplan) => {
+          if (mealplan.id === id) {
+            mealplan.day = day;
+            mealplan.category = category;
+            mealplan.name = name;
+            mealplan.ingredients = ingredients;
+            mealplan.steps = steps;
+            mealplan.preptime = preptime;
+            mealplan.image = image;
+            mealplan.status = "planned"; // reset status to planned when updating
+          }
+          return mealplan;
+        })
+      );
+      // update the notes in local storage
+      setMealPlan(updatedMealPlan);
+      localStorage.setItem("mealplanlist", JSON.stringify(updatedMealPlan));
+      // show success message
+      toast("Meal plan has been updated");
+      // redirect back to home page
+      navigate(`/meal/${id}`);
+    }
+  };
+
   return (
     <>
       <Container maxWidth="lg" sx={{ py: "30px" }}>
@@ -124,15 +166,16 @@ function EditMeal() {
             <ArrowBackIcon />
             Back to Meal Page
           </Button>
-          <Typography variant="h2">Edit Meal Plan</Typography>
+          <Typography variant="h3">Edit Meal Plan</Typography>
           {/* update button */}
-          <Button variant="contained">Update Meal Plan</Button>
+          <Button variant="contained" onClick={HandleUpdate}>
+            Update Meal Plan
+          </Button>
         </Box>
         {/* START Box for updating image, day, name, category, prep time */}
         <Box
           sx={{
             display: "flex",
-            // justifyContent: "space-around",
             alignItems: "center",
             gap: "250px",
             my: "60px",

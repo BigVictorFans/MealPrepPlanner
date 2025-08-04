@@ -1,21 +1,23 @@
-import { Link as RouterLink, useNavigate } from "react-router";
 import {
   Container,
   Typography,
   Paper,
   TextField,
-  Select,
   Box,
-  MenuItem,
-  FormControl,
   InputLabel,
   Button,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogActions,
+  Tooltip,
 } from "@mui/material";
 import { useState } from "react";
 import { List, ListItem, ListItemText, IconButton } from "@mui/material";
 import { Edit, Delete } from "@mui/icons-material";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import { nanoid } from "nanoid";
+import { toast } from "sonner";
 
 function ShoppingList() {
   // 1. load the data from the local storage (key is shoppinglist).
@@ -50,7 +52,7 @@ function ShoppingList() {
       // 5. Save to localStorage
       localStorage.setItem("shoppinglist", JSON.stringify(uniqueIngredients));
       // 6. Feedback
-      alert(
+      toast(
         "The Shopping list has been replaced with all ingredients from your meal plan!"
       );
     }
@@ -60,7 +62,7 @@ function ShoppingList() {
   const handleAddNew = () => {
     // 4a. make sure the field is not empty, show error
     if (item === "") {
-      alert("Please fill in the field");
+      toast("Please fill in the field.");
     } else {
       // 4b. add the new item to the state
       const updatedShoppingList = [
@@ -69,7 +71,7 @@ function ShoppingList() {
       ];
       setShoppingList(updatedShoppingList);
       // show notification of success message
-      alert("Item has been added to the shopping list!");
+      toast("Item has been added to the shopping list!");
       // reset the field
       setItem("");
       // 4c. update the local storage with the updated shopping list
@@ -77,51 +79,72 @@ function ShoppingList() {
     }
   };
 
+  const [editItem, setEditItem] = useState(null); // the object being edited
+  const [editName, setEditName] = useState(""); // the new name
+  const [deleteOpen, setDeleteOpen] = useState(false); // delete dialog open / close state
+  const [editOpen, setEditOpen] = useState(false); // edit dialog open / close state
+
+  const handleClickEditOpen = (item) => {
+    setEditItem(item); // store the item object
+    setEditName(item.name); // initialize edit field with current name
+    setEditOpen(true); // open edit dialog
+  };
+
+  const handleClickDeleteOpen = () => {
+    setDeleteOpen(true); // open delete dialog
+  };
+
+  const handleEditClose = () => {
+    setEditOpen(false); // close edit dialog
+  };
+
+  const handleDeleteClose = () => {
+    setDeleteOpen(false); // close delete dialog
+  };
+
   // 5. function to update the item name
-  const handleUpdate = (list) => {
-    // 5a. prompt the user to update the new name for the selected item (pass in the current value)
-    const newListItem = prompt(
-      "Please enter the new name for the category",
-      list.name
+  const handleUpdate = () => {
+    // if no value, tell the user to fill up the field
+    if (editItem === null || editName.trim() === "") {
+      toast("Please enter a new name for the item.");
+      return;
+    }
+
+    const updatedShoppingList = [...shoppinglist];
+    setShoppingList(
+      updatedShoppingList.map((item) => {
+        if (item.id === editItem.id) {
+          item.name = editName;
+        }
+        return item;
+      })
     );
 
-    if (newListItem) {
-      const updatedShoppingList = [...shoppinglist];
-      setShoppingList(
-        updatedShoppingList.map((item) => {
-          if (item.id === list.id) {
-            item.name = newListItem;
-          }
-          return item;
-        })
-      );
-
-      // show notification of success message
-      alert("Category has been successfully updated.");
-      // 5c. update the local storage with the udpated shopping list
-      updatedLocalStorage(updatedShoppingList);
-    }
+    // show notification of success message
+    toast("Item has been successfully updated.");
+    // 5c. update the local storage with the udpated shopping list
+    updatedLocalStorage(updatedShoppingList);
+    // close the dialog
+    handleEditClose();
   };
 
   // 6. function to delete the item from shopping list
   const handleDelete = (id) => {
-    const confirmation = confirm("Are you sure you want to delete this item?");
-
-    if (confirmation) {
-      // 6a. delete the item from the shopping list state
-      const updatedShoppingList = shoppinglist.filter((item) => {
-        if (item.id !== id) {
-          return true; // keep
-        } else {
-          return false; // throw away
-        }
-      });
-      setShoppingList(updatedShoppingList);
-      // show notification of success message
-      alert("Category has been successfully deleted.");
-      // 6b. update the local storage with the updated shopping list
-      updatedLocalStorage(updatedShoppingList);
-    }
+    // 6a. delete the item from the shopping list state
+    const updatedShoppingList = shoppinglist.filter((item) => {
+      if (item.id !== id) {
+        return true; // keep
+      } else {
+        return false; // throw away
+      }
+    });
+    setShoppingList(updatedShoppingList);
+    // show notification of success message
+    toast("Category has been successfully deleted.");
+    // 6b. update the local storage with the updated shopping list
+    updatedLocalStorage(updatedShoppingList);
+    // close the dialog
+    handleDeleteClose();
   };
 
   return (
@@ -166,7 +189,7 @@ function ShoppingList() {
             mt: "20px",
           }}
         >
-          <InputLabel>Existing Categories ({shoppinglist.length})</InputLabel>
+          <InputLabel>Items ({shoppinglist.length})</InputLabel>
           <List sx={{ width: "100%" }}>
             {/* map shopping list items */}
             {shoppinglist.map((list) => (
@@ -176,12 +199,55 @@ function ShoppingList() {
                 divider
                 secondaryAction={
                   <Box sx={{ display: "flex", gap: "10px" }}>
-                    <IconButton onClick={() => handleUpdate(list)}>
-                      <Edit />
-                    </IconButton>
-                    <IconButton onClick={() => handleDelete(list.id)}>
-                      <Delete />
-                    </IconButton>
+                    {/* edit button */}
+                    <Tooltip title="Edit" placement="top">
+                      <IconButton onClick={() => handleClickEditOpen(list)}>
+                        <Edit />
+                      </IconButton>
+                    </Tooltip>
+                    {/* edit dialog start */}
+                    <Dialog open={editOpen} onClose={handleEditClose}>
+                      <DialogTitle>Edit Item</DialogTitle>
+                      <DialogContent sx={{ paddingBottom: 0 }}>
+                        <TextField
+                          autoFocus
+                          required
+                          margin="dense"
+                          id="item"
+                          name="item"
+                          label="New Name"
+                          type="text"
+                          fullWidth
+                          variant="standard"
+                          value={editName}
+                          onChange={(event) => setEditName(event.target.value)}
+                        />
+                        <DialogActions>
+                          <Button onClick={handleEditClose}>Cancel</Button>
+                          <Button onClick={handleUpdate}>Save</Button>
+                        </DialogActions>
+                      </DialogContent>
+                    </Dialog>
+                    {/* edit dialog end */}
+                    {/* delete button */}
+                    <Tooltip title="Delete" placement="top">
+                      <IconButton onClick={() => handleClickDeleteOpen()}>
+                        <Delete />
+                      </IconButton>
+                    </Tooltip>
+                    {/* delete dialog start */}
+                    <Dialog open={deleteOpen} onClose={handleDeleteClose}>
+                      <DialogTitle>
+                        Are you sure you want to delete this meal plan?
+                      </DialogTitle>
+                      <DialogActions>
+                        <Button onClick={handleDeleteClose}>Cancel</Button>
+                        <Button onClick={() => handleDelete(list.id)}>
+                          Delete
+                        </Button>
+                      </DialogActions>
+                    </Dialog>
+                    {/* delete dialog end */}
                   </Box>
                 }
               >
