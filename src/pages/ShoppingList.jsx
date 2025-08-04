@@ -243,7 +243,7 @@ function ShoppingList() {
                     {/* delete dialog start */}
                     <Dialog open={deleteOpen} onClose={handleDeleteClose}>
                       <DialogTitle>
-                        Are you sure you want to delete this meal plan?
+                        Are you sure you want to delete this item?
                       </DialogTitle>
                       <DialogActions>
                         <Button onClick={handleDeleteClose}>Cancel</Button>

@@ -14,6 +14,7 @@ import {
   ListItem,
   ListItemText,
   IconButton,
+  InputAdornment,
 } from "@mui/material";
 import ClearIcon from "@mui/icons-material/Clear";
 import { useState } from "react";
@@ -41,7 +42,8 @@ function AddMeals() {
 
   const [steps, setSteps] = useState("");
 
-  const [preptime, setPreptime] = useState("");
+  const [preptimeHour, setPreptimeHour] = useState("");
+  const [preptimeMin, setPreptimeMin] = useState("");
 
   const [status, setStatus] = useState("planned");
 
@@ -85,9 +87,15 @@ function AddMeals() {
       name.trim() === "" ||
       ingredients === "" ||
       steps === "" ||
-      preptime === ""
+      preptimeMin.trim() === ""
     ) {
       toast("Please fill up all the fields.");
+    } else if (
+      preptimeMin <= 0 ||
+      preptimeMin >= 60 ||
+      (preptimeHour !== "" && (preptimeHour <= 0 || preptimeHour >= 24))
+    ) {
+      toast("Please fill in a valid prep time");
     } else {
       const updatedMealPlan = [
         ...mealplan,
@@ -98,7 +106,8 @@ function AddMeals() {
           name: name,
           ingredients: ingredients,
           steps: steps,
-          preptime: preptime,
+          preptimehour: preptimeHour,
+          preptimemin: preptimeMin,
           status: status,
           image: image,
         },
@@ -301,16 +310,40 @@ function AddMeals() {
             />
           </Box>
           {/* prep time */}
-          <Box sx={{ mt: "20px" }}>
+          <InputLabel sx={{ mt: "20px", mb: "10px" }}>Prep Time</InputLabel>
+          <Box sx={{ display: "flex", gap: "20px" }}>
             <TextField
+              type="number"
               fullWidth
               id="prep_time"
-              label="Prep Time"
               variant="outlined"
-              placeholder="Estimated Time"
-              value={preptime}
+              value={preptimeHour}
               onChange={(event) => {
-                setPreptime(event.target.value);
+                setPreptimeHour(event.target.value);
+              }}
+              slotProps={{
+                input: {
+                  endAdornment: (
+                    <InputAdornment position="end">hours</InputAdornment>
+                  ),
+                },
+              }}
+            />
+            <TextField
+              type="number"
+              fullWidth
+              id="prep_time"
+              variant="outlined"
+              value={preptimeMin}
+              onChange={(event) => {
+                setPreptimeMin(event.target.value);
+              }}
+              slotProps={{
+                input: {
+                  endAdornment: (
+                    <InputAdornment position="end">minutes</InputAdornment>
+                  ),
+                },
               }}
             />
           </Box>

@@ -59,8 +59,13 @@ function MealPlan() {
   const [steps, setSteps] = useState(
     selectedMealPlan ? selectedMealPlan.steps : ""
   );
-  const [preptime, setPreptime] = useState(
-    selectedMealPlan ? selectedMealPlan.preptime : ""
+  // prep time (minutes)
+  const [preptimeMin, setPreptimeMin] = useState(
+    selectedMealPlan ? selectedMealPlan.preptimemin : ""
+  );
+  // prep time (hour)
+  const [preptimeHour, setPreptimeHour] = useState(
+    selectedMealPlan ? selectedMealPlan.preptimehour : ""
   );
   // image
   const [image, setImage] = useState(
@@ -109,7 +114,12 @@ function MealPlan() {
               {name}
             </Typography>
             <Chip sx={{ textTransform: "capitalize" }} label={`${category}`} />
-            <Typography sx={{ py: "10px" }}>Prep Time: {preptime}</Typography>
+            <Typography sx={{ py: "10px" }}>
+              Prep Time:
+              {preptimeHour === ""
+                ? ` ${preptimeMin} minutes`
+                : ` ${preptimeHour} hours ${preptimeMin} minutes`}
+            </Typography>
             <Box sx={{ display: "flex", gap: "20px" }}>
               <Button
                 variant="contained"

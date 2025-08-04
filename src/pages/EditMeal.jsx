@@ -13,6 +13,7 @@ import {
   InputLabel,
   MenuItem,
   IconButton,
+  InputAdornment,
 } from "@mui/material";
 import ClearIcon from "@mui/icons-material/Clear";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -84,9 +85,13 @@ function EditMeal() {
   const [steps, setSteps] = useState(
     selectedMealPlan ? selectedMealPlan.steps : ""
   );
-  // prep time
-  const [preptime, setPreptime] = useState(
-    selectedMealPlan ? selectedMealPlan.preptime : ""
+  // prep time (minutes)
+  const [preptimeMin, setPreptimeMin] = useState(
+    selectedMealPlan ? selectedMealPlan.preptimemin : ""
+  );
+  // prep time (hour)
+  const [preptimeHour, setPreptimeHour] = useState(
+    selectedMealPlan ? selectedMealPlan.preptimehour : ""
   );
   // image
   const [image, setImage] = useState(
@@ -123,10 +128,15 @@ function EditMeal() {
       name.trim() === "" ||
       ingredients === "" ||
       steps === "" ||
-      preptime === ""
+      preptimeMin.trim() === ""
     ) {
       toast("Please fill in all required fields.");
-      return;
+    } else if (
+      preptimeMin <= 0 ||
+      preptimeMin >= 60 ||
+      (preptimeHour !== "" && (preptimeHour <= 0 || preptimeHour >= 24))
+    ) {
+      toast("Please fill in a valid prep time");
     } else {
       const updatedMealPlan = [...mealplan];
       setMealPlan(
@@ -137,7 +147,8 @@ function EditMeal() {
             mealplan.name = name;
             mealplan.ingredients = ingredients;
             mealplan.steps = steps;
-            mealplan.preptime = preptime;
+            mealplan.preptimehour = preptimeHour;
+            mealplan.preptimemin = preptimeMin;
             mealplan.image = image;
           }
           return mealplan;
@@ -279,16 +290,40 @@ function EditMeal() {
               </Select>
             </FormControl>
             {/* update prep time */}
-            <Box sx={{ mt: "20px" }}>
+            <InputLabel sx={{ mt: "20px", mb: "10px" }}>Prep Time</InputLabel>
+            <Box sx={{ display: "flex", gap: "20px" }}>
               <TextField
+                type="number"
                 fullWidth
-                id="meal_name"
-                label="Prep Time"
+                id="prep_time"
                 variant="outlined"
-                placeholder="Estimated Time"
-                value={preptime}
+                value={preptimeHour}
                 onChange={(event) => {
-                  setPreptime(event.target.value);
+                  setPreptimeHour(event.target.value);
+                }}
+                slotProps={{
+                  input: {
+                    endAdornment: (
+                      <InputAdornment position="end">hours</InputAdornment>
+                    ),
+                  },
+                }}
+              />
+              <TextField
+                type="number"
+                fullWidth
+                id="prep_time"
+                variant="outlined"
+                value={preptimeMin}
+                onChange={(event) => {
+                  setPreptimeMin(event.target.value);
+                }}
+                slotProps={{
+                  input: {
+                    endAdornment: (
+                      <InputAdornment position="end">minutes</InputAdornment>
+                    ),
+                  },
                 }}
               />
             </Box>
