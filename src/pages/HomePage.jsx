@@ -40,13 +40,6 @@ function Homepage() {
 
   const [selectedStatus, setSelectedStatus] = useState("all");
 
-  // toggle complete / planned
-  const [isCompleted, setisCompleted] = useState(false);
-
-  const TogglePrep = () => {
-    setisCompleted(!isCompleted);
-  };
-
   // tabs
   const [tabvalue, setTabvalue] = useState("");
 
