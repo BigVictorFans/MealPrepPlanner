@@ -28,8 +28,9 @@ function ShoppingList() {
 
   const [editItem, setEditItem] = useState(null); // the object being edited
   const [editName, setEditName] = useState(""); // the new name
-  const [deleteOpen, setDeleteOpen] = useState(false); // delete dialog open / close state
   const [editOpen, setEditOpen] = useState(false); // edit dialog open / close state
+  const [itemToDelete, setItemToDelete] = useState(null);
+  const [deleteOpen, setDeleteOpen] = useState(false); // delete dialog open / close state
   const [generateOpen, setGenerateOpen] = useState(false); // auto generate dialog open / close state
 
   const handleClickEditOpen = (item) => {
@@ -42,12 +43,14 @@ function ShoppingList() {
     setEditOpen(false); // close edit dialog
   };
 
-  const handleClickDeleteOpen = () => {
+  const handleClickDeleteOpen = (item) => {
+    setItemToDelete(item); // store the item to delete
     setDeleteOpen(true); // open delete dialog
   };
 
   const handleDeleteClose = () => {
     setDeleteOpen(false); // close delete dialog
+    setItemToDelete(null); // reset item to delete
   };
 
   const handleGenerateOpen = () => {
@@ -119,10 +122,10 @@ function ShoppingList() {
   };
 
   // 6. function to delete the item from shopping list
-  const handleDelete = (id) => {
+  const handleDelete = () => {
     // 6a. delete the item from the shopping list state
     const updatedShoppingList = shoppinglist.filter((item) => {
-      if (item.id !== id) {
+      if (item.id !== itemToDelete.id) {
         return true; // keep
       } else {
         return false; // throw away
@@ -131,6 +134,7 @@ function ShoppingList() {
     setShoppingList(updatedShoppingList);
     // show notification of success message
     toast("Item has been successfully deleted.");
+    setItemToDelete(null); // clear
     // close the dialog
     handleDeleteClose();
   };
@@ -219,7 +223,7 @@ function ShoppingList() {
                     {/* edit dialog end */}
                     {/* delete button */}
                     <Tooltip title="Delete" placement="top">
-                      <IconButton onClick={handleClickDeleteOpen}>
+                      <IconButton onClick={() => handleClickDeleteOpen(list)}>
                         <Delete />
                       </IconButton>
                     </Tooltip>
@@ -230,9 +234,7 @@ function ShoppingList() {
                       </DialogTitle>
                       <DialogActions>
                         <Button onClick={handleDeleteClose}>Cancel</Button>
-                        <Button onClick={() => handleDelete(list.id)}>
-                          Delete
-                        </Button>
+                        <Button onClick={handleDelete}>Delete</Button>
                       </DialogActions>
                     </Dialog>
                     {/* delete dialog end */}
