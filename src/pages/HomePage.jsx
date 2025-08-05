@@ -68,6 +68,7 @@ function Homepage() {
       const days = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
       // set the tab value based on the days
       setTabvalue(days[d.getDay()]);
+      setDay(days[d.getDay()]);
     }
   }, []);
 
