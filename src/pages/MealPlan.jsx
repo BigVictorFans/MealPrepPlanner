@@ -101,7 +101,7 @@ function MealPlan() {
                 image ||
                 "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/300px-No_image_available.svg.png"
               }
-              style={{ width: "350px", height: "350px" }}
+              style={{ width: "350px", height: "350px", objectFit: "cover" }}
             />
           </Box>
           {/* box for name, category and prep time of meal */}
