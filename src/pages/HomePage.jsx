@@ -79,8 +79,10 @@ function Homepage() {
 
   // dialog state
   const [open, setOpen] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState(null);
 
-  const handleClickOpen = () => {
+  const handleClickOpen = (item) => {
+    setItemToDelete(item);
     setOpen(true);
   };
 
@@ -89,10 +91,10 @@ function Homepage() {
   };
 
   /* 8. delete */
-  const handleMealsDelete = (id) => {
+  const handleMealsDelete = () => {
     // 9. use filter and remove the meal from the mealplan state
     const updatedMealPlan = mealplan.filter((meal) => {
-      if (meal.id !== id) {
+      if (meal.id !== itemToDelete.id) {
         return true;
       } else {
         return false;
@@ -101,7 +103,7 @@ function Homepage() {
     // 10. update the notes state with the updatedMealPlan
     setMealPlan(updatedMealPlan);
     // 12. show success notification
-    toast("Notes deleted successfully");
+    toast("Meal plan deleted successfully");
     handleClose();
   };
 
@@ -294,7 +296,7 @@ function Homepage() {
                     <Tooltip title="Delete" placement="top">
                       <Button
                         variant="contained"
-                        onClick={() => handleClickOpen()}
+                        onClick={() => handleClickOpen(meal)}
                         sx={{ bgcolor: "red" }}
                       >
                         <DeleteIcon />
@@ -307,9 +309,7 @@ function Homepage() {
                       </DialogTitle>
                       <DialogActions>
                         <Button onClick={handleClose}>Cancel</Button>
-                        <Button onClick={() => handleMealsDelete(meal.id)}>
-                          Delete
-                        </Button>
+                        <Button onClick={handleMealsDelete}>Delete</Button>
                       </DialogActions>
                     </Dialog>
                   </CardActions>
