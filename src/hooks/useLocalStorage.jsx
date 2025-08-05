@@ -24,5 +24,7 @@ export function useLocalStorage(key, initialValue) {
     }
   }
 
+  // its a custom hook that returns the stored value and the set value function
+
   return [storedValue, setValue]
 }
